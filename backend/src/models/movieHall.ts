@@ -18,10 +18,9 @@ const movieHallSchema = new Schema({
         enum: ["standard", "vip", "premium"],
         required: true,
       },
-      matrix: [[{ type: Schema.Types.ObjectId, ref: "Seat" }]],
+      matrix: [[Boolean]], //matrix er body banate hobe true or false | ekta movie thetre e koto type er matrix hote pare.booking er time e eta frntend e send krbo and render krbo
     },
   ],
-  movies: [{ type: Schema.Types.ObjectId, ref: "Movie" }],
   location: String,
 });
 
