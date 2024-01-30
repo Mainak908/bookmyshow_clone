@@ -1,26 +1,14 @@
 import { Document, Schema, model } from "mongoose";
-
-interface SeatMatrix {
-  type: "standard" | "vip" | "premium";
-  matrixStruct: boolean[][];
-}
+interface smt {}
 export interface MovieHall extends Document {
   name: string;
   location: string;
-  seatMatrices: SeatMatrix[];
+  seatMatrices: { seatNumber: string; fare: number }[][][];
 }
+
 const movieHallSchema = new Schema<MovieHall>({
   name: String,
-  seatMatrices: [
-    {
-      type: {
-        type: String,
-        enum: ["standard", "vip", "premium"],
-        required: true,
-      },
-      matrixStruct: [[Boolean]],
-    },
-  ],
+  seatMatrices: [[[{ seatNumber: String, fare: Number }]]],
   location: String,
 });
 

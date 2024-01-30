@@ -9,8 +9,11 @@ export interface Bookingtype extends Document {
   user: Usertype["_id"];
   movie: Movie["_id"];
   movieHall: MovieHall["_id"];
-  seatNumber: string;
-  seatType: string;
+  seatNumber: {
+    first: number;
+    second: number;
+  };
+
   date: Date;
 }
 
@@ -18,8 +21,8 @@ const bookingSchema = new Schema<Bookingtype>({
   user: { type: Schema.Types.ObjectId, ref: "UserAcc" },
   movie: { type: Schema.Types.ObjectId, ref: "Movie" },
   movieHall: { type: Schema.Types.ObjectId, ref: "MovieHall" },
-  seatNumber: String,
-  seatType: String,
+  seatNumber: { first: Number, second: Number },
+
   date: { type: Date, default: Date.now },
 });
 

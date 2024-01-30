@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema<Usertype>({
   order: {
     type: Schema.Types.ObjectId,
     ref: "Booking",
-    required: true,
   },
 });
 
