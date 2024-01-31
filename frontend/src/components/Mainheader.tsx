@@ -1,14 +1,22 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { FaApple } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa6";
+// import Sidebar from "./Sidebar";
 
 const Mainheader = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   return (
     <nav className="w-full h-16 relative bg-gray-800 z-50 flex  mx-auto">
       <div className="flex items-center justify-center w-full px-9">
+        {/* <Sidebar /> */}
         <Image
           src="/logo.png"
           className=" ml-18 pr-2"
@@ -110,10 +118,17 @@ const Mainheader = () => {
             </div>
           </div>
 
-          <a href="#" className="relative pr-4 text-white text-30  open-menu">
-            <RiMenu3Line />
-          </a>
+          <RiMenu3Line
+            className="cursor-pointer relative pr-4 text-white text-30"
+            onClick={handleToggleSidebar}
+          />
         </div>
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black opacity-50"
+            onClick={handleToggleSidebar}
+          ></div>
+        )}
       </div>
     </nav>
   );

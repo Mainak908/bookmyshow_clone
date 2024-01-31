@@ -12,7 +12,7 @@ import { IoTicketOutline } from "react-icons/io5";
 
 const Sidebar = () => {
   return (
-    <nav className="w-360 h-screen fixed top-0 right-[-365px] z-50 bg-white text-black transition-all duration-300 shadow-md text-left">
+    <div>
       <nav className="w-full h-16 relative top-0 left-0 px-4 bg-gray-800 z-9 flex items-center">
         <h1>Hey!</h1>
       </nav>
@@ -106,7 +106,7 @@ const Sidebar = () => {
         <div className="text">BookASmile</div>
         <div className="size-4 absolute pt-[5px] right-[10px] text-gray-600"></div>
       </a>
-    </nav>
+    </div>
   );
 };
 
