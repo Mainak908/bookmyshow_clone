@@ -88,7 +88,26 @@ body {
   scroll-behavior: smooth;
 }
 
+.sidebar a {
+  height: 60px;
+  border-bottom: 1px solid #f3f3f3;
+  display: flex;
+  color: black;
+  text-decoration: none;
+  align-items: center;
+}
+.sidebar a div {
+  display: inline-block;
+}
+div .text {
+  padding-left: 50px;
+  font-size: 14px;
+  color: #000;
+}
 
+.text div {
+  font-size: 11px;
+}
 .enter-container::-webkit-scrollbar {
   display: none;
 }

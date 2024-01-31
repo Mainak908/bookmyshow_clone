@@ -13,12 +13,12 @@ const SidebarExample = () => {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 z-10 right-0 w-64 bg-white transition-transform transform ${
+        className={`fixed inset-y-0 z-10 right-0 w-[360px] bg-white transition-transform transform text-left ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Sidebar content goes here */}
-        {/* <Sidebar /> */}
+        <Sidebar />
       </div>
 
       {/* Overlay */}
