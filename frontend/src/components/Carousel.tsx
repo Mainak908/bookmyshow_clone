@@ -1,8 +1,7 @@
 "use client";
-import React from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 const FlipkartBanner = () => {
   const settings = {
@@ -17,7 +16,7 @@ const FlipkartBanner = () => {
   };
 
   return (
-    <div className="carousel-container w-full ">
+    <div className="carousel-container max-w-full">
       <div className="carousel">
         <Slider {...settings}>
           <div className="slider ">
@@ -43,5 +42,4 @@ const FlipkartBanner = () => {
     </div>
   );
 };
-
 export default FlipkartBanner;

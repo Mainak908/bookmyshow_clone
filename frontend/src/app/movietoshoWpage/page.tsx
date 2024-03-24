@@ -1,8 +1,10 @@
 "use client";
+import Mainheader from "@/components/Mainheader";
+import Subheader from "@/components/subheader";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const page = () => {
   const searchParam = useSearchParams();
@@ -19,6 +21,8 @@ const page = () => {
   }, []);
   return (
     <div>
+      <Mainheader />
+      <Subheader />
       {theatrelist.map((theatre, key) => (
         <div key={key} className=" mb-4 flex gap-5">
           <Link href={`/movietoshoWpage?search=${""}`}>
