@@ -1,11 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import HeaderCmp from "@/components/header";
 import FrameA from "@/components/FrameA";
-import { useSearchParams } from "next/navigation";
+import HeaderCmp from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { loadStripe } from "@stripe/stripe-js";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import LoadingPage from "../loading";
 
-interface matrixElement {
+export interface matrixElement {
+  islocked: boolean;
+
   reference: string;
   seatNumber: string;
   fare: number;
@@ -16,29 +22,63 @@ export interface ShowType {
   time: Date;
   seatmatrix: matrixElement[][];
 }
+
+const stripePromise = loadStripe(
+  "pk_test_51O07tpSC4QlQZ4KyvCIAcKoXHmhRZt4zXs1c03fAPYkErsN4SJ6LNtJpM13jJBvKOxaNwP9NeXGHTiANIZokrYtU00axKLOBrx"
+);
+
 const SeatSelection = () => {
+  const createCheckOutSession = async () => {
+    const stripe = await stripePromise;
+
+    const checkoutSession = await axios.post(
+      "http://localhost:3001/api/v1/checkout",
+      {
+        item,
+        search,
+        selectedSeat,
+      }
+    );
+    const result = await stripe!.redirectToCheckout({
+      sessionId: checkoutSession.data.id,
+    });
+    if (result.error) {
+      alert(result.error.message);
+    }
+  };
   const searchParam = useSearchParams();
   const [showdesc, setshowdesc] = useState<ShowType | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedSeat, setselectedSeat] = useState<any[]>([]);
+  const search = searchParam.get("search");
+
+  const [item, setItem] = useState({
+    name: "ddlj",
+    description: "Latest movie",
+    image:
+      "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80",
+    quantity: 0,
+    fare: 0,
+  });
+  console.log(showdesc);
+
+  const { data, isLoading } = useQuery({
+    queryFn: () =>
+      axios
+        .post("http://localhost:3001/api/v1/findshowbyid", {
+          showId: search,
+        })
+        .then((res) => res.data),
+
+    queryKey: ["showId"],
+  });
 
   useEffect(() => {
-    const search = searchParam.get("search");
-    axios
-      .post("http://localhost:3001/api/v1/findshowbyid", {
-        showId: search,
-      })
-      .then((data) => data.data)
-      .then((data) => {
-        setshowdesc({ ...data });
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching show details:", error);
-        setLoading(false);
-      });
-  }, []);
+    if (data) {
+      setshowdesc(data);
+    }
+  }, [data]);
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
   if (!showdesc) {
@@ -46,13 +86,36 @@ const SeatSelection = () => {
   }
 
   return (
-    <div>
+    <div className="h-screen flex flex-col justify-between">
       <HeaderCmp details={showdesc.theatre} />
-      <div className="w-full h-screen flex relative bg-lightgray overflow-hidden  items-center justify-center   box-border tracking-[normal] mq450:pl-5 mq450:pr-5 mq450:box-border mq725:pl-[52px] mq725:pr-[52px] mq725:box-border mq1050:pl-[104px] mq1050:pr-[104px] mq1050:box-border">
-        {<FrameA details={showdesc} />}
+
+      <div className="flex-grow flex justify-center items-center">
+        <FrameA
+          details={showdesc}
+          selectedSeat={selectedSeat}
+          setselectedSeat={setselectedSeat}
+          setItem={setItem}
+          item={item}
+        />
+      </div>
+
+      <div className="flex justify-center items-center">
+        {selectedSeat.length === 3 && (
+          <Button
+            className="bg-pink-700 px-[170px] py-[17px]"
+            onClick={createCheckOutSession}
+          >
+            Proceed with {item.fare}
+          </Button>
+        )}
       </div>
     </div>
   );
 };
 
-export default SeatSelection;
+const Pagee = () => (
+  <Suspense fallback={<LoadingPage />}>
+    <SeatSelection />
+  </Suspense>
+);
+export default Pagee;

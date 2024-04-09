@@ -1,26 +1,36 @@
 "use client";
-import Mainheader from "@/components/Mainheader";
-import { Movie } from "@/components/Rmovies";
+import { Movie } from "@/components/Carousell";
+import Mainheader from "@/components/Mainheaderlg";
+import Subheader from "@/components/subheaderlg";
 
-import Subheader from "@/components/subheader";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const searchParam = useSearchParams();
   const search = searchParam.get("search");
-  const [moviedata, setmoviedata] = useState<Movie>();
-  useEffect(() => {
-    axios
-      .post("http://localhost:3001/api/v1/find_Single_movie", {
-        movie_id: search,
-      })
-      .then((data) => data.data)
-      .then((data) => setmoviedata({ ...data }));
-  }, []);
 
+  const [moviedata, setmoviedata] = useState<Movie>();
+
+  const { data, isLoading } = useQuery({
+    queryFn: () =>
+      axios
+        .get(`http://localhost:3001/api/v1/find_Single_movie/${search}`)
+        .then((res) => res.data),
+
+    queryKey: ["movie_id", search],
+    staleTime: 100000,
+  });
+  // console.log(data);
+  useEffect(() => {
+    if (data) {
+      setmoviedata({ ...data });
+    }
+  }, [data]);
+  if (isLoading) return <div>loading.........</div>;
   return (
     <div>
       <Mainheader />
@@ -40,7 +50,7 @@ const page = () => {
                     {moviedata && moviedata.title}
                   </h1>
                   <Link
-                    href={`/movietoshoWpage?search=${moviedata?._id}`}
+                    href={`/movietoshoWpage?search=${moviedata?._id}&movie=${moviedata?.title}`}
                     className=" p-4 rounded-2xl bg-blue-300 "
                   >
                     book ticket
@@ -55,4 +65,10 @@ const page = () => {
   );
 };
 
-export default page;
+const Pagee = () => (
+  <Suspense fallback={"loading..."}>
+    <Page />
+  </Suspense>
+);
+
+export default Pagee;

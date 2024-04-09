@@ -1,29 +1,22 @@
 import express from "express";
 import {
-  CreateMovie,
-  CreateMovieTheatre,
-  CreateShow,
-  UserCreate,
-  bookingfn,
   find_Single_movie,
   find_movie,
   findhallbyid,
   findshowbyid,
   movietoshow,
   viewshow,
-} from "../controllers/bookingC";
+} from "../controllers/generalController";
 const router = express.Router();
 
-router.route("/bookmovie").post(bookingfn);
 router.route("/findmovie").get(find_movie);
-router.route("/createshow").post(CreateShow);
-router.route("/createmovie").post(CreateMovie);
-router.route("/createmovietheatre").post(CreateMovieTheatre);
-router.route("/createuser").post(UserCreate);
+
 router.route("/viewshow").post(viewshow);
-router.route("/find_Single_movie").post(find_Single_movie);
+router.route("/find_Single_movie/:id").get(find_Single_movie);
 router.route("/movietoshow").post(movietoshow);
 router.route("/findshowbyid").post(findshowbyid);
 router.route("/findhallbyid").post(findhallbyid);
 
 export default router;
+
+//whsec_f7af4bcee9c77941c2e9cdbe11df19b1daa58124a66d28f75f7ddcff3f87a921

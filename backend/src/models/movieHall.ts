@@ -1,5 +1,5 @@
 import { Document, Schema, model } from "mongoose";
-interface smt {}
+
 export interface MovieHall extends Document {
   name: string;
   location: string;

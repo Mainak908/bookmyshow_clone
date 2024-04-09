@@ -1,22 +1,20 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { Bookingtype } from "./booking";
+import { Date, Document, model, Schema } from "mongoose";
 
 export interface Usertype extends Document {
-  name: string;
-  email: string;
-  order: Bookingtype["_id"];
+  name?: string;
+  email?: string;
+  image?: string;
+  phone?: string;
+  emailVerified?: Date;
+  refresh_token: string;
 }
-const userSchema = new mongoose.Schema<Usertype>({
+const userSchema = new Schema<Usertype>({
   name: String,
-  email: {
-    type: String,
-    required: true,
-  },
-  order: {
-    type: Schema.Types.ObjectId,
-    ref: "Booking",
-  },
+  email: String,
+  image: String,
+  phone: String,
+  emailVerified: Date,
+  refresh_token: String,
 });
 
-export default mongoose.model<Usertype>("UserAcc", userSchema);
-//database,collection,document
+export default model<Usertype>("UserAcc", userSchema);

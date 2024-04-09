@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  image         String?
+  email         String?   @unique
+  phone         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  favoriteIds   String[]  @db.ObjectId
+  Booking       Booking[]
+  Review        Review[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Booking {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id])
+  userId     String       @db.ObjectId
+  SeatNumber SeatNumber[]
+}
+
+type SeatNumber {
+  bookingId String @map("booking") @db.ObjectId
+  first     Int
+  second    Int
+}
+
+model Movie {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  length  Int
+  cast    String[]
+  crew    String[]
+  release DateTime
+  genre   String[]
+  url     String
+  lan     String
+  rating  Int
+  Show    Show[]
+  Review  Review[]
+}
+
+type SeatMatrix {
+  Seats Seatrow[]
+}
+
+type Seatrow {
+  perRow Perseat[]
+}
+
+type Perseat {
+  seatNumber String
+  fare       Int
+  reference  String? @db.ObjectId
+}
+
+model MovieHall {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  location     String
+  seatMatrices SeatMatrix[]
+  Show         Show[]
+}
+
+model Show {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  movie       Movie        @relation(fields: [movieId], references: [id])
+  movieId     String       @db.ObjectId
+  theatre     MovieHall    @relation(fields: [movieHallId], references: [id])
+  movieHallId String       @db.ObjectId
+  time        DateTime
+  seatmatrix  SeatMatrix[]
+}
+
+model Review {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.ObjectId
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  text    String
+  rating  Int
+  movieId String @db.ObjectId
+}

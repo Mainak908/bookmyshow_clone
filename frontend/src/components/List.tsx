@@ -1,5 +1,9 @@
+"use client";
+import { useEffect, useState } from "react";
+import MediaRendering from "./media-rendering";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -7,121 +11,67 @@ import {
 } from "./ui/carousel";
 
 const List = () => {
+  const [canScrollPrev, setCanScrollPrev] = useState<boolean | undefined>(
+    false
+  );
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+    api.scrollNext();
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+
+    setCanScrollPrev(api.canScrollPrev());
+  }, [api]);
+
   return (
-    <Carousel className="w-[1240px] mx-auto">
-      <CarouselContent className="-ml-1">
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
+    <div>
+      <MediaRendering minWidth={null} maxWidth="600">
+        <div className="overflow-x-auto flex gap-2 lg:hidden bg-white  overscroll-x-contain example">
+          {Array.from({ length: 9 }).map((_, index) => (
             <img
               src="/enter/enter1.webp"
-              className="card-img rounded-2xl"
+              className=" rounded-md w-[148px] h-[102px] "
               alt=""
+              key={index}
             />
+          ))}
+        </div>
+      </MediaRendering>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <div className="hidden lg:flex lg:flex-col lg:w-[1240px] mx-auto">
+          <Carousel className="w-full" setApi={setApi}>
+            <CarouselContent className="-ml-1">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <CarouselItem key={index} className="pl-1 lg:basis-1/5">
+                  <div className="p-1">
+                    <img
+                      src="/enter/enter1.webp"
+                      className=" rounded-2xl w-full h-full "
+                      alt=""
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+          <div className="py-2 text-center text-sm text-muted-foreground">
+            Slide {current} of {count}
           </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter2.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter5.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter6.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter7.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter8.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter9.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter10.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter11.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter12.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter3.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-        <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/5">
-          <div className="card">
-            <img
-              src="/enter/enter4.webp"
-              className="card-img rounded-2xl"
-              alt=""
-            />
-          </div>
-        </CarouselItem>
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+        </div>
+      </MediaRendering>
+    </div>
   );
 };
 

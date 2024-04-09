@@ -1,18 +1,19 @@
 import Image from "next/image";
-import React from "react";
+import { CiSettings } from "react-icons/ci";
+import { FiTv } from "react-icons/fi";
 import { GiSelfLove } from "react-icons/gi";
 import { GoGift } from "react-icons/go";
-import { MdChevronRight } from "react-icons/md";
-import { IoLockClosedOutline } from "react-icons/io5";
-import { CiSettings } from "react-icons/ci";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { FiTv } from "react-icons/fi";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { IoTicketOutline } from "react-icons/io5";
+import {
+  IoChatbubbleEllipsesOutline,
+  IoLockClosedOutline,
+  IoTicketOutline,
+} from "react-icons/io5";
+import { MdChevronRight } from "react-icons/md";
 
 const Sidebar = () => {
   return (
-    <div className="sidebar">
+    <div className="flex flex-col gap-2">
       <nav className="w-full h-16 relative top-0 left-0 px-4 bg-gray-800 z-9 flex items-center">
         <h1 className="text-white">Hey!</h1>
       </nav>
@@ -28,8 +29,11 @@ const Sidebar = () => {
       </nav>
 
       <a href="#" className="flex">
-        <IoIosNotificationsOutline className="size-6 pt-[5px] text-black pl-1" />
-        <div className="text">Notifications</div>
+        <div className="flex gap-1">
+          <IoIosNotificationsOutline className="size-6 pt-[5px] text-black pl-1" />
+          <div className="text">Notifications</div>
+        </div>
+
         <MdChevronRight className="size-4 absolute pt-[5px] right-[10px] text-gray-600" />
       </a>
 
@@ -57,7 +61,7 @@ const Sidebar = () => {
 
         <IoLockClosedOutline className="size-4 absolute pt-[5px] right-[10px] text-gray-600" />
       </a>
-      <a href="#">
+      <a href="#" className="flex">
         <IoChatbubbleEllipsesOutline className="size-6 pt-[5px] text-black pl-1" />
 
         <div className="text">
@@ -80,7 +84,7 @@ const Sidebar = () => {
 
         <IoLockClosedOutline className="size-4 absolute pt-[5px] right-[10px] text-gray-600" />
       </a>
-      <a href="#">
+      <a href="#" className="flex">
         <GoGift className="size-6 pt-[5px] text-black pl-1" />
 
         <div className="text">
@@ -90,7 +94,7 @@ const Sidebar = () => {
 
         <MdChevronRight className="size-4 absolute pt-[5px] right-[10px] text-gray-600" />
       </a>
-      <a href="#">
+      <a href="#" className="flex">
         <GiSelfLove className="size-6 pt-[5px] text-black pl-1" />
 
         <div className="text">BookASmile</div>
