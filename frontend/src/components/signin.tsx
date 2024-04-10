@@ -1,15 +1,19 @@
 "use client";
-import LoadingPage from "@/app/loading";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
+import { MdChevronLeft } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
 import getGoogleOAuthURL from "../../utils/getGoogleUri";
+import { InputOTPWithSeparator } from "./otpscreen";
 
 const SignInModal = ({ togglefn }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [otpScreen, setOtpScreen] = useState(false);
+
+  // console.log(otpScreen);
 
   const handlePhoneNumberChange = (e: any) => {
     const { value } = e.target;
@@ -87,63 +91,91 @@ const SignInModal = ({ togglefn }: any) => {
       console.log(error);
     }
   }, [phoneNumber]);
+  const handleBackClick = () => {
+    setOtpScreen(false);
+  };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg overflow-hidden w-[28rem]">
-        {loading ? (
-          <LoadingPage className="h-96" />
-        ) : (
-          <div className="p-6">
-            <div className="flex justify-between">
-              <h2 className="text-base font-normal mb-4">Get Started</h2>
-              <RxCross1 className="cursor-pointer" onClick={togglefn} />
-            </div>
-
+    <div>
+      {otpScreen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg overflow-hidden w-[28rem] h-[500px] p-6 relative shadow-lg">
             <button
-              onClick={handleGoogleLogin}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-md w-full mb-4"
+              className="absolute top-4 left-4 text-gray-600 focus:outline-none z-10 rounded-md bg-white shadow-md hover:bg-gray-100 transition-colors duration-300"
+              onClick={handleBackClick}
             >
-              Continue with Google
+              <MdChevronLeft className="w-6 h-6" />
             </button>
-            <p className="mx-auto">OR</p>
-            <div className="flex pt-6 mb-4 justify-center">
-              <Image
-                alt="indian flag"
-                src="/indianflag.svg"
-                height={20}
-                width={40}
-                className="pl-[12px]"
-              />
-              <div className="pl-[5px] text-sm pt-3 text-gray-500 pr-10">
-                +91
-              </div>
-              <input
-                type="tel"
-                placeholder="Enter your phone number"
-                pattern="[0-9]*"
-                value={phoneNumber}
-                onChange={handlePhoneNumberChange}
-                className="focus:outline-none border-b focus:border-red-400"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-              />
-            </div>
-
-            {(isFocused || phoneNumber.length > 0) && (
-              <button
-                onClick={login}
-                className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md w-full ${
-                  isFocused && isPhoneNumberValid ? "" : "opacity-50"
-                }`}
-                disabled={!isFocused || !isPhoneNumberValid}
-              >
-                Continue
-              </button>
-            )}
+            <h2 className="text-lg font-bold mb-4 mt-16">
+              Verify Your Mobile Number
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Enter OTP sent to +91{phoneNumber}
+            </p>
+            <InputOTPWithSeparator />
           </div>
-        )}
-      </div>
+        </div>
+      )}
+      {!otpScreen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg overflow-hidden w-[28rem] h-[300px]">
+            <div className="p-6">
+              <div className="flex justify-between">
+                <h2 className="text-base font-normal mb-4">Get Started</h2>
+                <RxCross1 className="cursor-pointer" onClick={togglefn} />
+              </div>
+
+              <button
+                onClick={handleGoogleLogin}
+                className=" h-[45px] bg-white flex text-gray-700 no-underline border border-solid border-gray-300 rounded-md items-center hover:bg-gray-300  hover:transition-all duration-500 w-full"
+              >
+                <div className="pl-5">
+                  <Image src="/googlelogo.svg" alt="" height={19} width={19} />
+                </div>
+                <p className="text-base font-semibold ml-20">
+                  Continue with Google
+                </p>
+              </button>
+
+              <p className="ml-[185px] my-5">OR</p>
+
+              <div className="flex mb-4 justify-center">
+                <Image
+                  alt="indian flag"
+                  src="/indianflag.svg"
+                  height={12}
+                  width={20}
+                  className=""
+                />
+                <div className="p-2 text-sm  text-gray-500 ">+91</div>
+                <input
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  pattern="[0-9]*"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                  className="focus:outline-none border-b focus:border-red-400"
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                />
+              </div>
+
+              {(isFocused || phoneNumber.length > 0) && (
+                <button
+                  onClick={() => setOtpScreen((prev) => !prev)}
+                  className={`bg-red-400 text-white font-semibold py-3 px-6 rounded-md w-full ${
+                    !isPhoneNumberValid && "bg-slate-400"
+                  }
+                  }`}
+                  disabled={!isPhoneNumberValid}
+                >
+                  Continue
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

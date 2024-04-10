@@ -122,3 +122,26 @@ body{
   flex: 0 0 calc(50% - 8px); /* 50% width minus padding */
   max-width: calc(50% - 8px); /* 50% width minus padding */
 }
+
+
+.modal-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-exit {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+}
