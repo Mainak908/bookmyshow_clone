@@ -62,7 +62,8 @@ export async function googleOauthHandler(req: Request, res: Response) {
 
     const { accessToken, refreshToken } = CreateAccessRefreshToken(
       user._id,
-      user.email as string
+      undefined,
+      user.email
     );
 
     // set cookies
@@ -95,6 +96,7 @@ export async function phoneLoginHandler(req: Request, res: Response) {
   const { phone, value } = req.body;
 
   redis.get(phone).then(async (result) => {
+    // console.log(result);
     if (result === value) {
       const user = await findAndUpdateUser(
         {
@@ -111,15 +113,15 @@ export async function phoneLoginHandler(req: Request, res: Response) {
 
       const { accessToken, refreshToken } = CreateAccessRefreshToken(
         user!._id,
-        user?.email
+        user?.phone
       );
-      console.log("accessToken", accessToken);
-      console.log("................................................");
-      console.log("refreshtoken", refreshToken);
+
       res.cookie("accessToken", accessToken, accessTokenCookieOptions);
 
       res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
       res.json({ success: true });
+    } else {
+      res.json({ success: false });
     }
   });
 }

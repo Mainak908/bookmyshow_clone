@@ -15,6 +15,7 @@ export function InputOTPWithSeparator({ phone }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, value }),
+        credentials: "include",
       });
     } catch (error) {
       console.log(error);

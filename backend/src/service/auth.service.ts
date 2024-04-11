@@ -30,11 +30,16 @@ export const otpSender = async (mobileNumber: string) => {
   }
 };
 
-export const CreateAccessRefreshToken = (id: any, email?: string) => {
+export const CreateAccessRefreshToken = (
+  id: any,
+  phone?: string,
+  email?: string
+) => {
   const accessToken = jwt.sign(
     {
       _id: id,
-      email: email,
+      phone,
+      email,
     },
     config.get("privateKey")!,
     {
