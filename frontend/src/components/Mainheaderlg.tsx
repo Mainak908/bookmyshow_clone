@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { FaAngleDown } from "react-icons/fa6";
+import { GoChevronDown } from "react-icons/go";
 import { IoIosSearch } from "react-icons/io";
-import { RiMenu3Line } from "react-icons/ri";
+import { IoReorderThreeOutline } from "react-icons/io5";
 import Sidebar from "./Sidebar";
 import SignInModal from "./signin";
 
@@ -16,6 +16,7 @@ const Mainheader = () => {
   };
   const handleToggleSigninbar = () => {
     setisSigninOpen(!isSigninOpen);
+    setIsSidebarOpen(false);
   };
 
   return (
@@ -26,7 +27,7 @@ const Mainheader = () => {
             isSidebarOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <Sidebar />
+          <Sidebar handleToggleSigninbar={handleToggleSigninbar} />
         </div>
         <Image
           src="/logo.svg"
@@ -43,12 +44,11 @@ const Mainheader = () => {
           />
         </div>
         <div className="flex ml-auto items-center gap-3">
-          <div className="flex gap-2">
-            <a href="#" className="relative no-underline text-sm ml-4">
-              Kollam
-            </a>
-            <FaAngleDown />
-          </div>
+          <button className="flex gap-2 cursor-pointer justify-center">
+            <p className="relative  text-sm ml-4">Kolkata</p>
+            <GoChevronDown className="text-base mt-[2px]" />
+          </button>
+
           <button
             className="relative w-16 h-6 mr-2 border rounded-md text-xs  text-white bg-pink-500 border-pink-500"
             onClick={handleToggleSigninbar}
@@ -57,8 +57,8 @@ const Mainheader = () => {
           </button>
           {isSigninOpen && <SignInModal togglefn={handleToggleSigninbar} />}
 
-          <RiMenu3Line
-            className="cursor-pointer relative pr-4  text-4xl"
+          <IoReorderThreeOutline
+            className="cursor-pointer relative pr-4  text-[50px] font-thin"
             onClick={handleToggleSidebar}
           />
         </div>

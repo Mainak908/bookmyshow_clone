@@ -10,7 +10,6 @@ import {
 const router = express.Router();
 
 router.route("/findmovie").get(find_movie);
-
 router.route("/viewshow").post(viewshow);
 router.route("/find_Single_movie/:id").get(find_Single_movie);
 router.route("/movietoshow").post(movietoshow);

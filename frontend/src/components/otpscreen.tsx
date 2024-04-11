@@ -4,15 +4,31 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export function InputOTPWithSeparator() {
+export function InputOTPWithSeparator({ phone }) {
   const [value, setValue] = useState("");
 
-  if (value.length === 6) console.log("otp submitted");
+  const handleVerifyOTP = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/verifyOTP", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, value }),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (value.length === 6) {
+      handleVerifyOTP();
+    }
+  }, [value]);
+
   const inputref = useRef(null);
   useEffect(() => {
-    // console.log(inputref.current);
     if (inputref.current) inputref.current.focus();
   }, []);
   return (
@@ -24,8 +40,8 @@ export function InputOTPWithSeparator() {
         className="focus:outline-none"
         ref={inputref}
       >
-        <InputOTPGroup className="gap-2 focus:outline-none ">
-          <InputOTPSlot index={0} className="focus:outline-none  " />
+        <InputOTPGroup className="gap-2 focus:outline-none">
+          <InputOTPSlot index={0} className="focus:outline-none" />
           <InputOTPSlot index={1} className="focus:outline-none" />
 
           <InputOTPSlot index={2} className="focus:outline-none" />

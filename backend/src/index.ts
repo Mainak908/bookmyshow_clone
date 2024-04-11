@@ -7,10 +7,9 @@ import { googleOauthHandler } from "./controllers/authController";
 import { webHookfn } from "./controllers/bookingController";
 import { InitFunction } from "./init";
 import adminRoute from "./routes/adminRoute";
-import {
-  default as bookingRoute,
-  default as generalRoute,
-} from "./routes/generalRoute";
+import authRoute from "./routes/authRoute";
+import bookingRoute from "./routes/bookingRoute";
+import generalRoute from "./routes/generalRoute";
 
 export const { myQueue, redis, stripe } = InitFunction();
 
@@ -41,8 +40,10 @@ app.use(bodyParser.json());
 app.use("/api/v1", bookingRoute);
 app.use("/api/v1", adminRoute);
 app.use("/api/v1", generalRoute);
+app.use("/api/v1", authRoute);
 
 app.get("/api/auth/callback/google", googleOauthHandler);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

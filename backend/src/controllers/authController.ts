@@ -1,13 +1,12 @@
 import config from "config";
 import { CookieOptions, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { redis } from "..";
+import { CreateAccessRefreshToken, otpSender } from "../service/auth.service";
 import {
   findAndUpdateUser,
   getGoogleOAuthTokens,
   getGoogleUser,
 } from "../service/user.service";
-
-const privateKey = config.get<string>("privateKey");
 
 const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15 mins
@@ -59,29 +58,11 @@ export async function googleOauthHandler(req: Request, res: Response) {
     );
 
     // console.log(user);
+    if (!user) return null;
 
-    // create an access token
-
-    const accessToken = jwt.sign(
-      {
-        _id: user!._id,
-        email: user!.email,
-      },
-      config.get("privateKey")!,
-      {
-        expiresIn: config.get("accessTokenTtl"),
-      }
-    );
-
-    // create a refresh token
-    const refreshToken = jwt.sign(
-      {
-        _id: user!._id,
-      },
-      config.get("privateKey")!,
-      {
-        expiresIn: config.get("refreshTokenTtl"),
-      }
+    const { accessToken, refreshToken } = CreateAccessRefreshToken(
+      user._id,
+      user.email as string
     );
 
     // set cookies
@@ -108,4 +89,45 @@ export async function googleOauthHandler(req: Request, res: Response) {
     console.error(error, "Failed to authorize Google user");
     return res.redirect(`${config.get("origin")}/oauth/error`);
   }
+}
+
+export async function phoneLoginHandler(req: Request, res: Response) {
+  const { phone, value } = req.body;
+
+  redis.get(phone).then(async (result) => {
+    if (result === value) {
+      const user = await findAndUpdateUser(
+        {
+          phone,
+        },
+        {
+          phone,
+        },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+
+      const { accessToken, refreshToken } = CreateAccessRefreshToken(
+        user!._id,
+        user?.email
+      );
+      console.log("accessToken", accessToken);
+      console.log("................................................");
+      console.log("refreshtoken", refreshToken);
+      res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+
+      res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+      res.json({ success: true });
+    }
+  });
+}
+
+export async function otpSenderHandler(req: Request, res: Response) {
+  const { phoneNumber } = req.body;
+
+  await otpSender(phoneNumber);
+
+  res.json({ success: true });
 }

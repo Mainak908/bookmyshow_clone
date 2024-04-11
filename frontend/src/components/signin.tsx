@@ -13,14 +13,22 @@ const SignInModal = ({ togglefn }: any) => {
   const [loading, setLoading] = useState(false);
   const [otpScreen, setOtpScreen] = useState(false);
 
-  // console.log(otpScreen);
-
   const handlePhoneNumberChange = (e: any) => {
     const { value } = e.target;
-
     setPhoneNumber(value.slice(0, 10));
   };
-
+  const Sendotp = async () => {
+    setOtpScreen((prev) => !prev);
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/generateOTP", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber }),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleGoogleLogin = () => {
     // setLoading(true);
     const googleOAuthURL = getGoogleOAuthURL();
@@ -112,7 +120,7 @@ const SignInModal = ({ togglefn }: any) => {
             <p className="text-sm text-gray-600 mb-6">
               Enter OTP sent to +91{phoneNumber}
             </p>
-            <InputOTPWithSeparator />
+            <InputOTPWithSeparator phone={phoneNumber} />
           </div>
         </div>
       )}
@@ -157,12 +165,31 @@ const SignInModal = ({ togglefn }: any) => {
                   className="focus:outline-none border-b focus:border-red-400"
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Backspace") {
+                      return;
+                    }
+                    if (e.key === "Enter" && isPhoneNumberValid) {
+                      return setOtpScreen((prev) => !prev);
+                    }
+                    const isValidInput = /^\d+$/.test(e.key);
+                    if (!isValidInput) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    // Prevents pasting non-numeric characters
+                    const clipboardData = e.clipboardData.getData("text/plain");
+                    if (!/^\d+$/.test(clipboardData)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               </div>
 
               {(isFocused || phoneNumber.length > 0) && (
                 <button
-                  onClick={() => setOtpScreen((prev) => !prev)}
+                  onClick={Sendotp}
                   className={`bg-red-400 text-white font-semibold py-3 px-6 rounded-md w-full ${
                     !isPhoneNumberValid && "bg-slate-400"
                   }
