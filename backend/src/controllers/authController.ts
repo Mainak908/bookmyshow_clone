@@ -85,7 +85,9 @@ export async function googleOauthHandler(req: Request, res: Response) {
 
     // console.log(req);
     // res.redirect(config.get("origin"));
+
     res.send("<script>window.close();</script>");
+    // .json({ success: true, data: user });
   } catch (error) {
     console.error(error, "Failed to authorize Google user");
     return res.redirect(`${config.get("origin")}/oauth/error`);
@@ -96,7 +98,6 @@ export async function phoneLoginHandler(req: Request, res: Response) {
   const { phone, value } = req.body;
 
   redis.get(phone).then(async (result) => {
-    // console.log(result);
     if (result === value) {
       const user = await findAndUpdateUser(
         {
@@ -119,7 +120,7 @@ export async function phoneLoginHandler(req: Request, res: Response) {
       res.cookie("accessToken", accessToken, accessTokenCookieOptions);
 
       res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
-      res.json({ success: true });
+      res.json({ success: true, data: user });
     } else {
       res.json({ success: false });
     }
@@ -131,5 +132,11 @@ export async function otpSenderHandler(req: Request, res: Response) {
 
   await otpSender(phoneNumber);
 
+  res.json({ success: true });
+}
+
+export async function logOutHandler(req: Request, res: Response) {
+  res.clearCookie("accessToken");
+  res.clearCookie("accessToken");
   res.json({ success: true });
 }

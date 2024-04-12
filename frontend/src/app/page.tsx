@@ -1,3 +1,4 @@
+import { CarouselSpacing } from "@/components/Carousell";
 import List from "@/components/List";
 import Mainheader from "@/components/Mainheaderlg";
 import MobileSubnavbar from "@/components/MobileSubNavbar";
@@ -24,7 +25,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* <CarouselSpacing /> */}
+      <CarouselSpacing />
 
       <div className="lg:w-[1240px] w-full mx-auto mt-8 ">
         <img
