@@ -2,8 +2,8 @@ import { Worker } from "bullmq";
 import DF from "ioredis";
 
 export const redis = new DF({
-  host: process.env.REDISHOST || "localhost",
-  port: Number(process.env.REDISPORT) || 6380,
+  host: process.env.CACHEHOST || "localhost",
+  port: Number(process.env.CACHEPORT) || 6380,
 });
 
 new Worker(
@@ -26,8 +26,9 @@ new Worker(
   },
   {
     connection: {
-      host: "localhost",
-      port: 6378,
+      host: process.env.REDISHOST || "localhost",
+      port: Number(process.env.REDISPORT) || 6378,
+      password: process.env.REDISPASS,
     },
   }
 );
