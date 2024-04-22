@@ -2,7 +2,8 @@
 
 import { matrixElement } from "@/app/seat/page";
 import { cn } from "@/lib/utils";
-import { Dispatch, SetStateAction } from "react";
+import { AuthContext } from "@/providers";
+import { Dispatch, SetStateAction, useContext } from "react";
 
 interface PrintRowProps {
   row: matrixElement[];
@@ -25,8 +26,10 @@ export const PrintRow: React.FC<PrintRowProps> = ({
   setItem,
   item,
 }) => {
+  const { seatCount, setSeatCount } = useContext(AuthContext);
+
   const selectfn = (ri: number, coli: number, fare: number) => {
-    if (selectedSeat.length === 3) return;
+    if (selectedSeat.length === seatCount) return;
     setselectedSeat((prev: any) => [...prev, [ri, coli]]);
     changeQuantity(item.quantity + 1, fare);
   };

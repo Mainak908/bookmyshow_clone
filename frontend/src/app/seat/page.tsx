@@ -2,16 +2,18 @@
 import FrameA from "@/components/FrameA";
 import HeaderCmp from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { AuthContext } from "@/providers";
 import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import LoadingPage from "../loading";
+import Modal from "./seatmodal";
 
 export interface matrixElement {
   islocked: boolean;
-
   reference: string;
   seatNumber: string;
   fare: number;
@@ -23,12 +25,18 @@ export interface ShowType {
   seatmatrix: matrixElement[][];
 }
 
-const stripePromise = loadStripe(
-  "pk_test_51O07tpSC4QlQZ4KyvCIAcKoXHmhRZt4zXs1c03fAPYkErsN4SJ6LNtJpM13jJBvKOxaNwP9NeXGHTiANIZokrYtU00axKLOBrx"
-);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_SECRET);
 
 const SeatSelection = () => {
+  const searchParam = useSearchParams();
+  const [showdesc, setshowdesc] = useState<ShowType | null>(null);
+  const [selectedSeat, setselectedSeat] = useState<any[]>([]);
+  const search = searchParam.get("search");
+  const [showModal, setShowModal] = useState(true);
+  const { seatCount, setSeatCount, loggedIn } = useContext(AuthContext);
+
   const createCheckOutSession = async () => {
+    if (!loggedIn) return toast("login first");
     const stripe = await stripePromise;
 
     const checkoutSession = await axios.post(
@@ -46,10 +54,13 @@ const SeatSelection = () => {
       alert(result.error.message);
     }
   };
-  const searchParam = useSearchParams();
-  const [showdesc, setshowdesc] = useState<ShowType | null>(null);
-  const [selectedSeat, setselectedSeat] = useState<any[]>([]);
-  const search = searchParam.get("search");
+  const handleSeatCountSelect = (count) => {
+    setSeatCount(count);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   const [item, setItem] = useState({
     name: "ddlj",
@@ -59,7 +70,7 @@ const SeatSelection = () => {
     quantity: 0,
     fare: 0,
   });
-  console.log(showdesc);
+  // console.log(showdesc);
 
   const { data, isLoading } = useQuery({
     queryFn: () =>
@@ -79,35 +90,49 @@ const SeatSelection = () => {
   }, [data]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
   if (!showdesc) {
     return <div>Error fetching show details</div>;
   }
 
   return (
-    <div className="h-screen flex flex-col justify-between">
-      <HeaderCmp details={showdesc.theatre} />
-
-      <div className="flex-grow flex justify-center items-center">
-        <FrameA
-          details={showdesc}
-          selectedSeat={selectedSeat}
-          setselectedSeat={setselectedSeat}
-          setItem={setItem}
-          item={item}
+    <div>
+      {showModal && (
+        <Modal
+          onClose={handleCloseModal}
+          onSeatSelect={handleSeatCountSelect}
+          seatCount={seatCount}
         />
-      </div>
+      )}
 
-      <div className="flex justify-center items-center">
-        {selectedSeat.length === 3 && (
-          <Button
-            className="bg-pink-700 px-[170px] py-[17px]"
-            onClick={createCheckOutSession}
-          >
-            Proceed with {item.fare}
-          </Button>
-        )}
+      <div className="h-screen flex flex-col justify-between">
+        <HeaderCmp
+          details={showdesc.theatre}
+          seatCount={seatCount}
+          setShowModal={setShowModal}
+        />
+
+        <div className="flex-grow flex justify-center items-center">
+          <FrameA
+            details={showdesc}
+            selectedSeat={selectedSeat}
+            setselectedSeat={setselectedSeat}
+            setItem={setItem}
+            item={item}
+          />
+        </div>
+
+        <div className="flex justify-center items-center">
+          {selectedSeat.length === seatCount && (
+            <Button
+              className="bg-pink-700 lg:px-[170px] px-[120px] py-[17px]"
+              onClick={createCheckOutSession}
+            >
+              Proceed with {item.fare}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

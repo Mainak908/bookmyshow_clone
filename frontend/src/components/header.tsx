@@ -1,17 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaAngleLeft } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
 import { RxCross2 } from "react-icons/rx";
 interface Prop {
   details: string;
+  seatCount: number;
+  setShowModal: any;
 }
 export interface MovieHall {
   name: string;
   location: string;
   seatMatrices: { seatNumber: string; fare: number }[][][];
 }
-const HeaderCmp = ({ details }: Prop) => {
+const HeaderCmp = ({ details, seatCount, setShowModal }: Prop) => {
   const [moviedata, setmoviedata] = useState<MovieHall | null>();
   useEffect(() => {
     axios
@@ -23,9 +25,9 @@ const HeaderCmp = ({ details }: Prop) => {
   }, []);
 
   return (
-    <div className="flex py-4 px-3">
-      <FaAngleLeft className=" ml-4 size-7" />
-      <div className="container mx-auto flex items-center justify-between">
+    <div className="flex py-4 px-5 w-full fixed">
+      <FaAngleLeft className="size-7" />
+      <div className=" flex items-center justify-between w-full">
         {moviedata && (
           <div className="flex flex-col justify-between">
             <div className="flex">
@@ -58,10 +60,13 @@ const HeaderCmp = ({ details }: Prop) => {
             <p>{moviedata?.location}</p>
           </div>
         )}
-        <div className="flex justify-between">
-          <div className=" border-black flex gap-2 p-3">
-            <p>4 tieckts</p>
-            <GoPencil />
+        <div className="flex justify-between ">
+          <div
+            className="border border-black flex gap-2 px-2 py-1 justify-center rounded cursor-pointer mr-4"
+            onClick={() => setShowModal(true)}
+          >
+            <p className="text-xs">{seatCount} tickets</p>
+            <GoPencil className="size-3" />
           </div>
           <RxCross2 />
         </div>

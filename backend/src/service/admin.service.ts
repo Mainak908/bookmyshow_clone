@@ -32,16 +32,3 @@ export function generateSeatMatrix(
 
   return seatMatrix;
 }
-export function generateRandomDate() {
-  const currentDate = new Date();
-  const nextWeek = new Date(currentDate);
-  nextWeek.setDate(currentDate.getDate() + 7); // Set date to a week from now
-
-  // Set time to 7 PM
-  nextWeek.setHours(19, 0, 0, 0);
-
-  // Random time within 24 hours
-  const randomDate = new Date(nextWeek.getTime());
-
-  return randomDate;
-}

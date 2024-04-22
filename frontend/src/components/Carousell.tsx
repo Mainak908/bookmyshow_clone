@@ -27,7 +27,7 @@ export async function CarouselSpacing() {
   const movies: Movie[] = await datafetch();
 
   return (
-    <div>
+    <>
       <MediaRendering minWidth={null} maxWidth="600">
         <div className="overflow-x-auto flex gap-2 lg:hidden bg-white  overscroll-x-contain example">
           {movies.map((movie, index) => (
@@ -53,6 +53,6 @@ export async function CarouselSpacing() {
           <CarouselNext />
         </Carousel>
       </MediaRendering>
-    </div>
+    </>
   );
 }

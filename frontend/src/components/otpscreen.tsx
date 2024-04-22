@@ -4,10 +4,14 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { AuthContext } from "@/providers";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
-export function InputOTPWithSeparator({ phone }) {
+export function InputOTPWithSeparator({ phone, togglefn }) {
   const [value, setValue] = useState("");
+  const { checkLoginState } = useContext(AuthContext);
+  const inputref = useRef(null);
 
   const handleVerifyOTP = useCallback(async () => {
     try {
@@ -17,6 +21,13 @@ export function InputOTPWithSeparator({ phone }) {
         body: JSON.stringify({ phone, value }),
         credentials: "include",
       });
+      const res = await response.json();
+      if (res.success) {
+        togglefn((prev) => !prev);
+        checkLoginState();
+      } else {
+        toast("wrong otp entered");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -28,7 +39,6 @@ export function InputOTPWithSeparator({ phone }) {
     }
   }, [value]);
 
-  const inputref = useRef(null);
   useEffect(() => {
     if (inputref.current) inputref.current.focus();
   }, []);

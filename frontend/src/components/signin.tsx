@@ -1,17 +1,34 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { AuthContext } from "@/providers";
+import axios from "axios";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useContext, useState } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
-import getGoogleOAuthURL from "../../utils/getGoogleUri";
 import { InputOTPWithSeparator } from "./otpscreen";
+
+const serverUrl = process.env.NEXT_PUBLIC_SERVER_ENDPOINT;
 
 const SignInModal = ({ togglefn }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [otpScreen, setOtpScreen] = useState(false);
+  const { checkLoginState, loggedIn } = useContext(AuthContext);
+
+  // Define window features
+  const screenWidth = window.screen.availWidth;
+  const screenHeight = window.screen.availHeight;
+
+  const windowWidth = 600;
+  const windowHeight = 650;
+
+  const leftPosition = (screenWidth - windowWidth) / 2;
+  const topPosition = (screenHeight - windowHeight) / 2;
+
+  const windowFeatures =
+    `width=${windowWidth},height=${windowHeight},` +
+    `left=${leftPosition},top=${topPosition},` +
+    `menubar=no,toolbar=no,resizable=yes,scrollbars=no`;
 
   const handlePhoneNumberChange = (e: any) => {
     const { value } = e.target;
@@ -29,76 +46,41 @@ const SignInModal = ({ togglefn }: any) => {
       console.log(error);
     }
   };
-  const handleGoogleLogin = () => {
-    // setLoading(true);
-    const googleOAuthURL = getGoogleOAuthURL();
+  const handleGoogleLogin = async () => {
+    try {
+      // Gets authentication url from backend server
+      const {
+        data: { url },
+      } = await axios.get(`${serverUrl}/api/v1/url`);
 
-    // Define window features
-    const screenWidth = window.screen.availWidth;
-    const screenHeight = window.screen.availHeight;
+      window.open(url, "_blank", windowFeatures);
 
-    const windowWidth = 600;
-    const windowHeight = 650;
+      const handleWindowMessage = async (event: any) => {
+        if (event.origin !== "http://localhost:3000") {
+          return;
+        }
+        const { data } = event;
 
-    const leftPosition = (screenWidth - windowWidth) / 2;
-    const topPosition = (screenHeight - windowHeight) / 2;
+        if (!data.source) {
+          await axios.get(`${serverUrl}/api/v1/token${data}`, {
+            withCredentials: true,
+          });
+          checkLoginState();
+          togglefn((prev) => !prev);
+        }
+      };
 
-    const windowFeatures =
-      `width=${windowWidth},height=${windowHeight},` +
-      `left=${leftPosition},top=${topPosition},` +
-      `menubar=no,toolbar=no,resizable=yes,scrollbars=no`;
+      window.addEventListener("message", handleWindowMessage);
 
-    // Open a new window with Google OAuth URL
-    const newWindow = window.open(googleOAuthURL, "_blank", windowFeatures);
-
-    function handleMessage(event) {
-      console.log(event.data);
-      if (event.origin !== window.location.origin) {
-        return; // Ignore messages not from the same origin
-      }
-
-      if (event.data === "popupClosed") {
-        setLoading(false);
-        window.removeEventListener("message", handleMessage); // Clean up event listener
-      }
-    }
-
-    // Add event listener for handling messages
-    window.addEventListener("message", handleMessage);
-
-    // Add event listener for beforeunload to send message to parent window before closing
-    newWindow.addEventListener("beforeunload", function (event) {
-      // Send a message to the parent window before closing
-      newWindow.opener.postMessage(
-        "popupClosed",
-        newWindow.opener.location.origin
-      );
-    });
-
-    // Focus on the new window if it's opened
-    if (newWindow) {
-      newWindow.focus();
-    } else {
-      // Handle popup blocker or other issues
-      console.error("Popup window blocked or failed to open.");
-      // Redirect the user to the OAuth URL in the current window as a fallback
-      window.location.href = googleOAuthURL;
+      // Clean up the listener when the component unmounts
+      return () => window.removeEventListener("message", handleWindowMessage);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const isPhoneNumberValid = phoneNumber.length === 10;
 
-  const login = useCallback(async () => {
-    try {
-      await signIn("credentials", {
-        phone: phoneNumber,
-        redirect: true,
-        callbackUrl: "/",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, [phoneNumber]);
   const handleBackClick = () => {
     setOtpScreen(false);
   };
@@ -120,7 +102,7 @@ const SignInModal = ({ togglefn }: any) => {
             <p className="text-sm text-gray-600 mb-6">
               Enter OTP sent to +91{phoneNumber}
             </p>
-            <InputOTPWithSeparator phone={phoneNumber} />
+            <InputOTPWithSeparator phone={phoneNumber} togglefn={togglefn} />
           </div>
         </div>
       )}
@@ -180,6 +162,7 @@ const SignInModal = ({ togglefn }: any) => {
                   onPaste={(e) => {
                     // Prevents pasting non-numeric characters
                     const clipboardData = e.clipboardData.getData("text/plain");
+
                     if (!/^\d+$/.test(clipboardData)) {
                       e.preventDefault();
                     }

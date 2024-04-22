@@ -37,50 +37,45 @@ export const viewshow = async (req: Request, res: Response) => {
 };
 
 export const movietoshow = async (req: Request, res: Response) => {
-  const { movieId } = req.body;
+  const { movieId, date } = req.body;
 
-  redis.get(movieId, async (err, redisResult) => {
-    if (err) {
-      console.error("Error fetching data from Redis:", err);
-    }
-    if (redisResult) {
-      res.json(JSON.parse(redisResult));
-    } else {
-      const result = await ShowCreate.aggregate([
-        {
-          $match: {
-            movie: new mongoose.Types.ObjectId(movieId),
-          },
-        },
-        {
-          $lookup: {
-            from: "moviehalls",
-            localField: "theatre",
-            foreignField: "_id",
-            as: "alltheatre",
-          },
-        },
-        {
-          $unwind: "$alltheatre",
-        },
-        {
-          $project: {
-            time: 1,
-            theatreName: "$alltheatre.name",
-            _id: 1,
-          },
-        },
-      ]);
-      console.log("data fetched from server");
+  const desiredDate = new Date(date);
+  desiredDate.setHours(0, 0, 0, 0);
+  const tomorrow = new Date();
+  tomorrow.setDate(desiredDate.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
 
-      redis.set(movieId, JSON.stringify(result), (err) => {
-        if (err) {
-          console.error("Error storing data in Redis:", err);
-        }
-      });
-      res.json(result);
-    }
-  });
+  const result = await ShowCreate.aggregate([
+    {
+      $match: {
+        movie: mongoose.Types.ObjectId.createFromHexString(movieId),
+        time: {
+          $gte: desiredDate,
+          $lt: tomorrow,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "moviehalls",
+        localField: "theatre",
+        foreignField: "_id",
+        as: "alltheatre",
+      },
+    },
+    {
+      $unwind: "$alltheatre",
+    },
+    {
+      $project: {
+        time: 1,
+        theatreName: "$alltheatre.name",
+        _id: 1,
+      },
+    },
+  ]);
+
+  res.json(result);
 };
 
 export const findshowbyid = async (req: Request, res: Response) => {

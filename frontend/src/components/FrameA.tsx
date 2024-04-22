@@ -36,7 +36,7 @@ const FrameA: React.FC<FrameAProps> = ({
                 <div className="flex items-start justify-start py-0 px-[15px]">
                   <div className="">PREMIUM RS {row[0].fare}</div>
                 </div>
-                <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+                <div className="self-stretch h-px relative box-border border-t-[1px] border-solid border-slate-200 " />
               </div>
 
               <PrintRow

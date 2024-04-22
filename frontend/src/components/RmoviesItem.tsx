@@ -10,7 +10,7 @@ interface movieprop {
 const RmoviesItem: React.FC<movieprop> = ({ movie }) => {
   return (
     <Link className="relative" href={`/movie?search=${movie._id}`}>
-      <div className="relative w-[124px] h-[186px] lg:h-[400px] lg:w-[225px]">
+      <div className="relative w-[124px] h-[186px] lg:h-[378px] lg:w-[222px]">
         <img
           src="poster1.jpg"
           className="h-full lg:rounded-[10px] rounded-md"

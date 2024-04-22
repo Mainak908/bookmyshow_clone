@@ -7,10 +7,11 @@ import Booking from "../models/booking";
 export const checkout = async (req: Request, res: Response) => {
   try {
     const { item, search, selectedSeat } = req.body;
+
     const transformedItem = {
       price_data: {
         currency: "inr",
-        unit_amount: item.fare * 100,
+        unit_amount: (item.fare * 100) / item.quantity, //TODO:
         product_data: {
           images: [item.image],
           name: item.name,
@@ -61,13 +62,12 @@ export const webHookfn = async (req: Request, res: Response) => {
 
       const seatNumber = JSON.parse(details.seat);
       const showId = details.Showid;
-      console.log(seatNumber, showId);
+      // console.log(seatNumber, showId);
 
       const showFind = await ShowCreate.findById(showId);
 
       const newBooking = new Booking({
         user: "65b62e2141a2101b466d3b88",
-
         seatNumber,
       });
 

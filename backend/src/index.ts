@@ -1,9 +1,9 @@
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import { googleOauthHandler } from "./controllers/authController";
 import { webHookfn } from "./controllers/bookingController";
 import { InitFunction } from "./init";
 import adminRoute from "./routes/adminRoute";
@@ -17,12 +17,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CORSORIGIN,
     credentials: true,
   })
 );
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+app.use((req, _, next) => {
+  // console.log(`${req.method} ${req.url}`);
   next();
 });
 const port = 3001;
@@ -37,12 +37,12 @@ app.post(
   webHookfn
 );
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 app.use("/api/v1", bookingRoute);
 app.use("/api/v1", adminRoute);
 app.use("/api/v1", generalRoute);
 app.use("/api/v1", authRoute);
-
-app.get("/api/auth/callback/google", googleOauthHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

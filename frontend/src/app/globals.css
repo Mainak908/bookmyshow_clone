@@ -76,7 +76,12 @@
 }
 
 
-
+.image-opacity {
+  /* Adjust opacity value as needed (0 for transparent, 1 for opaque) */
+  opacity: 0.5;
+  /* Target the right shadow specifically using the box-shadow property */
+  box-shadow: rgba(0, 0, 0, 0.5) 4px 0px 0px 0px;
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 body::-webkit-scrollbar {
   display: none;

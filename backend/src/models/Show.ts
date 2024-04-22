@@ -1,7 +1,7 @@
 import { Document, Schema, model } from "mongoose";
+import { Bookingtype } from "./booking";
 import { Movie } from "./movie";
 import { MovieHall } from "./movieHall";
-import { Bookingtype } from "./booking";
 
 interface matrixElement {
   reference: Bookingtype["_id"];
@@ -39,4 +39,3 @@ const everyshow = new Schema<ShowType>({
 });
 
 export default model<ShowType>("EveryShow", everyshow);
-//ami age show create krbo then user booking krbe...toh jakhn show create krbo moviehall theke particular shape ekhane first e copy paste krbo

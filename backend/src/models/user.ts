@@ -1,5 +1,4 @@
 import { Date, Document, model, Schema } from "mongoose";
-
 export interface Usertype extends Document {
   name?: string;
   email?: string;

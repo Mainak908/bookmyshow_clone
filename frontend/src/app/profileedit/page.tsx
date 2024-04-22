@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { AuthContext } from "@/providers";
+import { redirect } from "next/navigation";
+import { useContext, useState } from "react";
 
 const ProfileEditPage = () => {
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("johndoe@example.com");
-  const [mobile, setMobile] = useState("123-456-7890");
+  const { user, loggedIn } = useContext(AuthContext);
+  const [name, setName] = useState(user?.name);
+  const [email, setEmail] = useState(user?.email);
+  const [mobile, setMobile] = useState(user?.phone);
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditClick = () => {
@@ -16,7 +19,7 @@ const ProfileEditPage = () => {
     // Here you can add logic to save the updated profile information
     setIsEditing(false);
   };
-
+  if (!loggedIn) redirect("/login");
   return (
     <div className="max-w-lg mx-auto mt-8 bg-white p-8 rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">Edit Profile</h1>

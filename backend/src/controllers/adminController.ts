@@ -2,31 +2,33 @@ import { Request, Response } from "express";
 import ShowCreate from "../models/Show";
 import Movie from "../models/movie";
 import MovieHall from "../models/movieHall";
-import {
-  generateRandomDate,
-  generateSeatMatrix,
-} from "../service/admin.service";
+import { generateSeatMatrix } from "../service/admin.service";
 
 export const CreateShow = async (req: Request, res: Response) => {
-  const { movieName, theatre_name } = req.body;
+  const { movieName, theatre_name, dateString, timeString } = req.body;
 
-  const find_movie = await Movie.findOne({
-    title: movieName,
-  });
-  const movieId = find_movie?._id;
+  const [findMovie, findTheatre] = await Promise.all([
+    Movie.findOne({ title: movieName }),
+    MovieHall.findOne({ name: theatre_name }),
+  ]);
 
-  const find_theatre = await MovieHall.findOne({
-    name: theatre_name,
-  });
-  const theatreId = find_theatre?._id;
-  const SeatMatrix = find_theatre?.seatMatrices[0];
+  const movieId = findMovie?._id;
+  const theatreId = findTheatre?._id;
+  const SeatMatrix = findTheatre?.seatMatrices[0];
+
+  const date = new Date(dateString);
+  const [hours, minutes] = timeString.split(":").map(Number);
+
+  date.setUTCHours(hours);
+  date.setUTCMinutes(minutes);
 
   const newshow = new ShowCreate({
     movie: movieId,
     theatre: theatreId,
-    time: generateRandomDate(),
+    time: date,
     seatmatrix: SeatMatrix,
   });
+
   const save_show = await newshow.save();
   res.json({
     success: true,

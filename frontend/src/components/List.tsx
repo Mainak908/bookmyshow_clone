@@ -34,7 +34,7 @@ const List = () => {
   }, [api]);
 
   return (
-    <div>
+    <>
       <MediaRendering minWidth={null} maxWidth="600">
         <div className="overflow-x-auto flex gap-2 lg:hidden bg-white  overscroll-x-contain example">
           {Array.from({ length: 9 }).map((_, index) => (
@@ -71,7 +71,7 @@ const List = () => {
           </div>
         </div>
       </MediaRendering>
-    </div>
+    </>
   );
 };
 

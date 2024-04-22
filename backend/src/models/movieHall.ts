@@ -2,7 +2,11 @@ import { Document, Schema, model } from "mongoose";
 
 export interface MovieHall extends Document {
   name: string;
-  location: string;
+  location: {
+    type: Object,
+    index: "2dsphere",
+    required: true,
+  },
   seatMatrices: { seatNumber: string; fare: number }[][][];
 }
 

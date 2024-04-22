@@ -1,6 +1,7 @@
 "use client";
+import { AuthContext } from "@/providers";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import { IoIosSearch } from "react-icons/io";
 import { IoReorderThreeOutline } from "react-icons/io5";
@@ -10,6 +11,7 @@ import SignInModal from "./signin";
 const Mainheader = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSigninOpen, setisSigninOpen] = useState(false);
+  const { loggedIn, user } = useContext(AuthContext);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -19,6 +21,13 @@ const Mainheader = () => {
     setIsSidebarOpen(false);
   };
 
+  function truncateString(str: string, maxLength: number) {
+    if (str.length > maxLength) {
+      return str.substring(0, maxLength - 3) + "...";
+    } else {
+      return str;
+    }
+  }
   return (
     <nav className="w-full h-16 relative z-50 hidden lg:flex  mx-auto ">
       <div className="flex items-center justify-center lg:w-[1245px] mx-auto ">
@@ -48,19 +57,36 @@ const Mainheader = () => {
             <p className="relative  text-sm ml-4">Kolkata</p>
             <GoChevronDown className="text-base mt-[2px]" />
           </button>
+          {loggedIn && user ? (
+            <div
+              className="flex gap-3 justify-center cursor-pointer"
+              onClick={handleToggleSidebar}
+            >
+              <img
+                src={user.picture ? user.picture : "/human.jpg"}
+                alt=""
+                className="rounded-full h-7 w-7"
+              />
+              <div className="text-sm my-auto">
+                Hi,{user.name ? truncateString(user.name, 7) : "User"}
+              </div>
+            </div>
+          ) : (
+            <>
+              <button
+                className="relative w-16 h-6 mr-2 border rounded-md text-xs  text-white bg-pink-500 border-pink-500"
+                onClick={handleToggleSigninbar}
+              >
+                Signin
+              </button>
 
-          <button
-            className="relative w-16 h-6 mr-2 border rounded-md text-xs  text-white bg-pink-500 border-pink-500"
-            onClick={handleToggleSigninbar}
-          >
-            Signin
-          </button>
+              <IoReorderThreeOutline
+                className="cursor-pointer relative pr-4  text-[50px] font-thin"
+                onClick={handleToggleSidebar}
+              />
+            </>
+          )}
           {isSigninOpen && <SignInModal togglefn={handleToggleSigninbar} />}
-
-          <IoReorderThreeOutline
-            className="cursor-pointer relative pr-4  text-[50px] font-thin"
-            onClick={handleToggleSidebar}
-          />
         </div>
         {isSidebarOpen && (
           <div

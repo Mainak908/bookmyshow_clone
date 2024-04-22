@@ -17,5 +17,3 @@ router.route("/findshowbyid").post(findshowbyid);
 router.route("/findhallbyid").post(findhallbyid);
 
 export default router;
-
-//whsec_f7af4bcee9c77941c2e9cdbe11df19b1daa58124a66d28f75f7ddcff3f87a921
