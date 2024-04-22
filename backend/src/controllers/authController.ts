@@ -1,9 +1,9 @@
 import axios from "axios";
-import config from "config";
 import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { stringify } from "qs";
 import { redis } from "..";
+import main from "../default";
 import UserModel from "../models/user";
 import { getTokenParams, otpSender } from "../service/auth.service";
 import { findAndUpdateUser } from "../service/user.service";
@@ -26,8 +26,8 @@ const refreshTokenCookieOptions: CookieOptions = {
   maxAge: 3.154e10, // 1 year
 };
 const authParams = stringify({
-  client_id: config.get("clientId"),
-  redirect_uri: config.get("redirectUrl"),
+  client_id: main.clientId,
+  redirect_uri: main.redirectUrl,
   response_type: "code",
   scope: "openid profile email",
   access_type: "offline",
@@ -57,9 +57,9 @@ export async function phoneLoginHandler(req: Request, res: Response) {
         {
           _id: user._id,
         },
-        config.get("privateKey")!,
+        main.privateKey!,
         {
-          expiresIn: config.get("refreshTokenTtl"),
+          expiresIn: main.refreshTokenTtl,
         }
       );
       user.refresh_token = refreshToken;
@@ -70,9 +70,9 @@ export async function phoneLoginHandler(req: Request, res: Response) {
           _id: user._id,
           phone,
         },
-        config.get("privateKey")!,
+        main.privateKey!,
         {
-          expiresIn: config.get("accessTokenTtl"),
+          expiresIn: main.accessTokenTtl,
         }
       );
 
@@ -113,7 +113,7 @@ export async function tokenSenderHandler(req: Request, res: Response) {
     // Exchange authorization code for access token (id token is returned here too)
     const {
       data: { id_token },
-    } = await axios.post(`${config.get("tokenUrl")}?${tokenParam}`);
+    } = await axios.post(`${main.tokenUrl}?${tokenParam}`);
     if (!id_token) return res.status(400).json({ message: "Auth error" });
     // Get user info from id token
     const { email, name, picture } = jwt.decode(id_token) as JwtPayload;
@@ -138,9 +138,9 @@ export async function tokenSenderHandler(req: Request, res: Response) {
       {
         _id: user._id,
       },
-      config.get("privateKey")!,
+      main.privateKey!,
       {
-        expiresIn: config.get("refreshTokenTtl"),
+        expiresIn: main.refreshTokenTtl,
       }
     );
     user.refresh_token = refreshToken;
@@ -153,9 +153,9 @@ export async function tokenSenderHandler(req: Request, res: Response) {
         name,
         picture,
       },
-      config.get("privateKey")!,
+      main.privateKey!,
       {
-        expiresIn: config.get("accessTokenTtl"),
+        expiresIn: main.accessTokenTtl,
       }
     );
 
@@ -173,7 +173,7 @@ export async function tokenSenderHandler(req: Request, res: Response) {
 
 export function urlSender(_: Request, res: Response) {
   res.json({
-    url: `${config.get("authUrl")}?${authParams}`,
+    url: `${main.authUrl}?${authParams}`,
   });
 }
 
@@ -185,7 +185,7 @@ export async function loggedinCheckHandler(req: Request, res: Response) {
 
     const user = jwt.verify(
       accessToken,
-      config.get("privateKey") as string
+      main.privateKey as string
     ) as JwtPayload2;
 
     res.json({ loggedIn: true, user });
@@ -207,7 +207,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      config.get("privateKey")!
+      main.privateKey!
     ) as IdecodedToken;
 
     const user = await UserModel.findById(decodedToken._id);
@@ -233,9 +233,9 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         email: user.email,
         picture: user.image,
       },
-      config.get("privateKey")!,
+      main.privateKey!,
       {
-        expiresIn: config.get("accessTokenTtl"),
+        expiresIn: main.accessTokenTtl,
       }
     );
 

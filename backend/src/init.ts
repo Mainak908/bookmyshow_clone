@@ -7,6 +7,7 @@ export function InitFunction() {
     connection: {
       host: process.env.REDISHOST || "localhost",
       port: Number(process.env.REDISPORT) || 6378,
+      password: process.env.REDISPASS,
     },
   });
 

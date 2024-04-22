@@ -1,7 +1,7 @@
 import axios from "axios";
-import config from "config";
 import otpGenerator from "otp-generator";
 import { stringify } from "qs";
+import main from "../default";
 import { redis } from "../index";
 
 export const otpSender = async (mobileNumber: string) => {
@@ -30,9 +30,9 @@ export const otpSender = async (mobileNumber: string) => {
 
 export const getTokenParams = (code: any) =>
   stringify({
-    client_id: config.get("clientId"),
-    client_secret: config.get("clientSecret"),
+    client_id: main.clientId,
+    client_secret: main.clientSecret,
     code,
     grant_type: "authorization_code",
-    redirect_uri: config.get("redirectUrl"),
+    redirect_uri: main.redirectUrl,
   });
