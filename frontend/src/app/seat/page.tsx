@@ -7,9 +7,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import LoadingPage from "../loading";
+import Notfound from "../not-found";
 import Modal from "./seatmodal";
 
 export interface matrixElement {
@@ -25,28 +26,36 @@ export interface ShowType {
   seatmatrix: matrixElement[][];
 }
 
+interface IshowType {
+  showdetails: ShowType;
+  success: boolean;
+}
+
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_SECRET);
 
 const SeatSelection = () => {
   const searchParam = useSearchParams();
-  const [showdesc, setshowdesc] = useState<ShowType | null>(null);
   const [selectedSeat, setselectedSeat] = useState<any[]>([]);
   const search = searchParam.get("search");
-  const [showModal, setShowModal] = useState(true);
-  const { seatCount, setSeatCount, loggedIn } = useContext(AuthContext);
+
+  const { seatCount, setSeatCount, loggedIn, setShowModal, showModal } =
+    useContext(AuthContext);
 
   const createCheckOutSession = async () => {
     if (!loggedIn) return toast("login first");
     const stripe = await stripePromise;
 
     const checkoutSession = await axios.post(
-      "http://localhost:3001/api/v1/checkout",
+      `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/checkout`,
       {
         item,
         search,
         selectedSeat,
-      }
+      },
+      { withCredentials: true }
     );
+    if (checkoutSession.data.message == "locked")
+      return toast("plz refresh page once before booking");
     const result = await stripe!.redirectToCheckout({
       sessionId: checkoutSession.data.id,
     });
@@ -70,28 +79,25 @@ const SeatSelection = () => {
     quantity: 0,
     fare: 0,
   });
-  // console.log(showdesc);
 
-  const { data, isLoading } = useQuery({
+  const { data: showdesc, isLoading } = useQuery<IshowType>({
     queryFn: () =>
       axios
-        .post("http://localhost:3001/api/v1/findshowbyid", {
-          showId: search,
-        })
+        .post(
+          `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/findshowbyid`,
+          {
+            showId: search,
+          }
+        )
         .then((res) => res.data),
 
     queryKey: ["showId"],
   });
 
-  useEffect(() => {
-    if (data) {
-      setshowdesc(data);
-    }
-  }, [data]);
-
   if (isLoading) {
     return <LoadingPage />;
   }
+  if (!showdesc.success) return <Notfound />;
   if (!showdesc) {
     return <div>Error fetching show details</div>;
   }
@@ -108,14 +114,14 @@ const SeatSelection = () => {
 
       <div className="h-screen flex flex-col justify-between">
         <HeaderCmp
-          details={showdesc.theatre}
+          details={showdesc.showdetails.theatre}
           seatCount={seatCount}
           setShowModal={setShowModal}
         />
 
         <div className="flex-grow flex justify-center items-center">
           <FrameA
-            details={showdesc}
+            details={showdesc.showdetails}
             selectedSeat={selectedSeat}
             setselectedSeat={setselectedSeat}
             setItem={setItem}

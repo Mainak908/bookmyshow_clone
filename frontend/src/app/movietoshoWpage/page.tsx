@@ -22,7 +22,7 @@ const Page = () => {
   const { data, isLoading, refetch } = useQuery({
     queryFn: () =>
       axios
-        .post("http://localhost:3001/api/v1/movietoshow", {
+        .post(`${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/movietoshow`, {
           movieId: search,
           date: initialDate,
         })

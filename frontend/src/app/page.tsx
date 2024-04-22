@@ -16,26 +16,15 @@ const App: React.FC = () => {
       <CarouselSpacingtry />
 
       <MediaRendering minWidth={null} maxWidth="600">
-        <div className=" w-full mx-auto mt-8 ">
-          <img
-            src="/bms22.avif"
-            className=" h-[71px] lg:rounded-2xl px-5 lg:p-0"
-            alt=""
-          />
-        </div>
-      </MediaRendering>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        <div className="w-[1240px]  mx-auto mt-8 ">
-          <img
-            src="/strip.webp"
-            className="h-[105px] lg:rounded-2xl px-5 lg:p-0"
-            alt=""
-          />
+        <div className=" w-full my-8 px-3">
+          <img src="/bms22.avif" className=" h-[71px] w-full " alt="" />
         </div>
       </MediaRendering>
 
-      <div className="flex justify-between lg:max-w-[1240px] m-0 lg:mx-auto w-screen">
-        <p className="lg:text-2xl text-lg font-bold  ">Recommended Movies</p>
+      <div className="flex justify-between lg:max-w-[1240px] lg:mt-8 lg:mb-2 m-0 lg:mx-auto w-screen px-3 lg:px-0">
+        <p className="lg:text-2xl text-lg font-extrabold  ">
+          Recommended Movies
+        </p>
         <div className="flex gap-[1px] lg:gap-1 items-center">
           <p className="text-red-400">See All</p>
           <MdKeyboardArrowRight className="text-red-900" />
@@ -43,8 +32,16 @@ const App: React.FC = () => {
       </div>
 
       <CarouselSpacing />
-
-      <h1 className="lg:text-2xl text-lg font-bold lg:max-w-[1240px] m-0 lg:mx-auto w-screen">
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <div className="w-[1240px]  mx-auto mt-8 ">
+          <img
+            src="/strip.webp"
+            className="h-[105px] lg:rounded-2xl px-5 lg:p-0 my-12"
+            alt=""
+          />
+        </div>
+      </MediaRendering>
+      <h1 className="lg:text-2xl text-lg font-bold lg:max-w-[1240px] mt-3 lg:mb-2 lg:mx-auto w-screen pl-2 lg:p-0 ">
         The Best of Entertainment
       </h1>
 

@@ -2,11 +2,11 @@ import { Worker } from "bullmq";
 import DF from "ioredis";
 
 export const redis = new DF({
-  host: "localhost",
-  port: 6380,
+  host: process.env.REDISHOST || "localhost",
+  port: Number(process.env.REDISPORT) || 6380,
 });
 
-const worker = new Worker(
+new Worker(
   "job",
   async (job: any) => {
     console.log(job.data);
@@ -18,9 +18,8 @@ const worker = new Worker(
       if (!redisresult) return null;
       const newseatmap = JSON.parse(redisresult);
       for (const [row, col] of seats) {
-        newseatmap.seatmatrix[row][col].islocked = false;
+        newseatmap.showdetails.seatmatrix[row][col].islocked = false;
       }
-
       redis.set(showId, JSON.stringify(newseatmap));
       console.log("redis value upgrade after timeout");
     });

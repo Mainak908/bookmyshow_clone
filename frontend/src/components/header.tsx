@@ -14,10 +14,11 @@ export interface MovieHall {
   seatMatrices: { seatNumber: string; fare: number }[][][];
 }
 const HeaderCmp = ({ details, seatCount, setShowModal }: Prop) => {
+  //TODO:
   const [moviedata, setmoviedata] = useState<MovieHall | null>();
   useEffect(() => {
     axios
-      .post("http://localhost:3001/api/v1/findhallbyid", {
+      .post(`${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/findhallbyid`, {
         hallId: details,
       })
       .then((data) => data.data)

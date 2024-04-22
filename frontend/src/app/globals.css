@@ -75,6 +75,7 @@
   }
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap');
 
 .image-opacity {
   /* Adjust opacity value as needed (0 for transparent, 1 for opaque) */
@@ -90,6 +91,7 @@ body::-webkit-scrollbar {
 body{
   scrollbar-width: none;
   padding-bottom: 70px;
+  font-family:roboto-bold  ;
 }
 /* Hide scrollbar for IE, Edge and Firefox */
 .example {
@@ -149,4 +151,22 @@ body{
 .modal-exit-active {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+.roboto-medium {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.roboto-bold {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.roboto-black {
+  font-family: "Roboto", sans-serif;
+  font-weight: 900;
+  font-style: normal;
 }

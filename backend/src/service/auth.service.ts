@@ -4,15 +4,14 @@ import otpGenerator from "otp-generator";
 import { stringify } from "qs";
 import { redis } from "../index";
 
-const otp = otpGenerator.generate(6, {
-  digits: true,
-  lowerCaseAlphabets: false,
-  specialChars: false,
-  upperCaseAlphabets: false,
-});
-
 export const otpSender = async (mobileNumber: string) => {
   try {
+    const otp = otpGenerator.generate(6, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+      upperCaseAlphabets: false,
+    });
     await axios.get("https://www.fast2sms.com/dev/bulkV2", {
       params: {
         authorization: process.env.OTPAUTHKEY,

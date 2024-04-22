@@ -36,11 +36,11 @@ const List = () => {
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="600">
-        <div className="overflow-x-auto flex gap-2 lg:hidden bg-white  overscroll-x-contain example">
+        <div className="overflow-x-auto flex gap-2    overscroll-x-contain  pl-2">
           {Array.from({ length: 9 }).map((_, index) => (
             <img
               src="/enter/enter1.webp"
-              className=" rounded-md w-[148px] h-[102px] "
+              className=" rounded-md w-[124px] h-[102px] "
               alt=""
               key={index}
             />
@@ -48,18 +48,16 @@ const List = () => {
         </div>
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
-        <div className="hidden lg:flex lg:flex-col lg:w-[1240px] mx-auto">
+        <div className="hidden lg:flex lg:flex-col lg:w-[1290px] mx-auto">
           <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent className="-ml-1">
+            <CarouselContent className="ml-5">
               {Array.from({ length: 9 }).map((_, index) => (
                 <CarouselItem key={index} className="pl-1 lg:basis-1/5">
-                  <div className="p-1">
-                    <img
-                      src="/enter/enter1.webp"
-                      className=" rounded-2xl w-full h-full "
-                      alt=""
-                    />
-                  </div>
+                  <img
+                    src="/enter/enter1.webp"
+                    className=" rounded-2xl w-[222px] h-full "
+                    alt=""
+                  />
                 </CarouselItem>
               ))}
             </CarouselContent>

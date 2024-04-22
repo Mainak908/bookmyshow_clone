@@ -13,13 +13,14 @@ import LoadingPage from "../loading";
 const Page = () => {
   const searchParam = useSearchParams();
   const search = searchParam.get("search");
-
   const [moviedata, setmoviedata] = useState<Movie>();
 
   const { data, isLoading } = useQuery({
     queryFn: () =>
       axios
-        .get(`http://localhost:3001/api/v1/find_Single_movie/${search}`)
+        .get(
+          `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/find_Single_movie/${search}`
+        )
         .then((res) => res.data),
 
     queryKey: ["movie_id", search],
@@ -58,18 +59,18 @@ const Page = () => {
       <MediaRendering minWidth="1024" maxWidth={null}>
         <Mainheader />
         <Subheader />
-        <div className="bg-black h-[480px] ">
-          <div className="w-[1240px] h-[480px] mx-auto  bg-[url('/sav.avif')]">
-            <div className="bg-gradient-to-r from-black to-transparent h-full w-full">
-              <div className="py-10 px-10">
-                <div className="flex relative overflow-hidden">
+        <div className="bg-black h-[480px] relative  ">
+          <div className="w-[1240px] h-full mx-auto  bg-[url('/sav.avif')] absolute left-[23%]">
+            <div className=" bg-cover h-full w-screen bg-gradient-to-r from-black  ">
+              <div className=" flex justify-end h-full w-full">
+                <div className="flex absolute top-[40px] -left-[8.6%] overflow-hidden gap-8">
                   <img
                     src="poster1.jpg"
-                    className="w-[261px] h-[392px] "
+                    className="w-[261px] h-[392px] rounded-lg"
                     alt=""
                   />
                   <div className="flex flex-col gap-4">
-                    <h1 className="text-white font-bold text-2xl">
+                    <h1 className="text-white font-extrabold text-3xl">
                       {moviedata && moviedata.title}
                     </h1>
                     <Link
@@ -83,6 +84,7 @@ const Page = () => {
                     </Link>
                   </div>
                 </div>
+                <div className="h-full w-[50px] bg-gradient-to-l from-black absolute top-0 right-0"></div>
               </div>
             </div>
           </div>

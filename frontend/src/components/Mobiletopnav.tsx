@@ -3,7 +3,7 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 
 const MobiletopNav = () => {
   return (
-    <div className=" flex fixed justify-between bg-cover items-center top-0 left-0 w-screen h-[64px] bg-[url('/backg.avif')] bg-white  border-b-[1px] border-solid border-b-slate-400 ">
+    <div className=" flex fixed justify-between bg-cover items-center top-0 left-0 w-screen h-[64px] bg-[url('/backg.avif')] bg-white  border-b-[1px] border-solid border-b-slate-400 z-10">
       <div className="ml-2">
         <h2 className="text-2xl font-bold">It All Starts Here!</h2>
         <div className="flex gap-1 items-center">

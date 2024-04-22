@@ -20,6 +20,8 @@ interface icontext {
   user: any;
   seatCount: number;
   setSeatCount: Dispatch<SetStateAction<number>>;
+  showModal: boolean;
+  setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 export const AuthContext = createContext<icontext | null>(null);
 
@@ -27,7 +29,7 @@ axios.interceptors.response.use(
   async (resp) => {
     if (resp.data.loggedIn === false) {
       const response = await axios.post(
-        "http://localhost:3001/api/v1/refresh",
+        `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/refresh`,
         {},
         {
           withCredentials: true,
@@ -52,6 +54,7 @@ const Providers = ({ children }: any) => {
   const [user, setUser] = useState(null);
   const queryClient = new QueryClient();
   const [seatCount, setSeatCount] = useState(2);
+  const [showModal, setShowModal] = useState(true);
 
   const checkLoginState = useCallback(async () => {
     try {
@@ -75,7 +78,15 @@ const Providers = ({ children }: any) => {
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
       <AuthContext.Provider
-        value={{ loggedIn, checkLoginState, user, seatCount, setSeatCount }}
+        value={{
+          loggedIn,
+          checkLoginState,
+          user,
+          seatCount,
+          setSeatCount,
+          showModal,
+          setShowModal,
+        }}
       >
         {children}
       </AuthContext.Provider>

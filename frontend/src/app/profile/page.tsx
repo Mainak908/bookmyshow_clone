@@ -1,3 +1,4 @@
+"use client";
 import { AuthContext } from "@/providers";
 import axios from "axios";
 import Image from "next/image";
@@ -16,7 +17,7 @@ import {
 import { MdChevronRight, MdKeyboardArrowRight } from "react-icons/md";
 import { toast } from "react-toastify";
 
-const Sidebar = ({ handleToggleSigninbar }) => {
+const Sidebar = () => {
   const { loggedIn, user } = useContext(AuthContext);
 
   const LogoutFn = async () => {
@@ -49,13 +50,15 @@ const Sidebar = ({ handleToggleSigninbar }) => {
               </Link>
             )}
           </div>
-          <Image
-            src={user?.picture}
-            height={40}
-            width={40}
-            alt=""
-            className="rounded-full h-[40px] my-auto"
-          />
+          {loggedIn && (
+            <Image
+              src={user?.picture}
+              height={40}
+              width={40}
+              alt=""
+              className="rounded-full h-[40px] my-auto"
+            />
+          )}
         </nav>
         {!loggedIn && (
           <nav className="w-full h-16 relative top-0 left-0 px-4 bg-white z-9 flex items-center shadow-md">
@@ -63,12 +66,12 @@ const Sidebar = ({ handleToggleSigninbar }) => {
             <p className="text-xs pl-[15px] pt-[12px] leading-[17px] font-normal">
               Unlock special offers & great benifits
             </p>
-            <button
-              className=" h-9 w-36 rounded-[10px] text-red-500 text-sm font-semibold border border-thin border-f84464 bg-white mr-5"
-              onClick={handleToggleSigninbar}
+            <Link
+              href={"/login"}
+              className=" h-9 w-36 rounded-[10px] text-red-500 text-sm font-semibold border border-thin border-f84464 bg-white mr-5 flex justify-center items-center"
             >
               Login / Register
-            </button>
+            </Link>
           </nav>
         )}
 

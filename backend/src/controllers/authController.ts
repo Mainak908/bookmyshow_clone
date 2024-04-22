@@ -180,7 +180,7 @@ export function urlSender(_: Request, res: Response) {
 export async function loggedinCheckHandler(req: Request, res: Response) {
   try {
     const { accessToken } = req.cookies;
-
+    // console.log("accessssss", accessToken);
     if (!accessToken) return res.json({ loggedIn: false });
 
     const user = jwt.verify(
@@ -245,6 +245,6 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 
       .json({ message: "access token refreshed" });
   } catch (error) {
-    console.log(error);
+    console.log("something error happend at refreshAccessToken");
   }
 };

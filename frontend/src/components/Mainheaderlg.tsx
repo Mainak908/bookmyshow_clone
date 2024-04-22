@@ -64,7 +64,7 @@ const Mainheader = () => {
             >
               <img
                 src={user.picture ? user.picture : "/human.jpg"}
-                alt=""
+                alt="m"
                 className="rounded-full h-7 w-7"
               />
               <div className="text-sm my-auto">

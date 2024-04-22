@@ -35,13 +35,16 @@ const SignInModal = ({ togglefn }: any) => {
     setPhoneNumber(value.slice(0, 10));
   };
   const Sendotp = async () => {
-    setOtpScreen((prev) => !prev);
     try {
-      const response = await fetch("http://localhost:3001/api/v1/generateOTP", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/generateOTP`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNumber }),
+        }
+      );
+      setOtpScreen((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +89,7 @@ const SignInModal = ({ togglefn }: any) => {
   };
 
   return (
-    <div>
+    <>
       {otpScreen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg overflow-hidden w-[28rem] h-[500px] p-6 relative shadow-lg">
@@ -102,7 +105,11 @@ const SignInModal = ({ togglefn }: any) => {
             <p className="text-sm text-gray-600 mb-6">
               Enter OTP sent to +91{phoneNumber}
             </p>
-            <InputOTPWithSeparator phone={phoneNumber} togglefn={togglefn} />
+            <InputOTPWithSeparator
+              phone={phoneNumber}
+              togglefn={togglefn}
+              redirect={false}
+            />
           </div>
         </div>
       )}
@@ -186,7 +193,7 @@ const SignInModal = ({ togglefn }: any) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

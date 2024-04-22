@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { redis } from "../index";
+import { asynchandler } from "../middleware/ErrorMiddleware";
 import ShowCreate from "../models/Show";
 import Movie from "../models/movie";
 import MovieHall from "../models/movieHall";
 
 export const find_movie = async (req: Request, res: Response) => {
   const movies = await Movie.find();
-
   res.json(movies);
 };
 export const find_Single_movie = async (req: Request, res: Response) => {
@@ -78,19 +78,20 @@ export const movietoshow = async (req: Request, res: Response) => {
   res.json(result);
 };
 
-export const findshowbyid = async (req: Request, res: Response) => {
-  const { showId } = req.body;
-  redis.get(showId, async (err, data) => {
-    if (data) {
-      console.log("findshowbyid redis hit");
-      res.json(JSON.parse(data));
-    } else {
-      const showdetails = await ShowCreate.findById(showId);
-      redis.set(showId, JSON.stringify(showdetails));
-      res.json(showdetails);
-    }
-  });
-};
+export const findshowbyid = asynchandler(
+  async (req: Request, res: Response) => {
+    const { showId } = req.body;
+
+    const data = await redis.get(showId);
+
+    if (data) return res.json(JSON.parse(data));
+
+    const showdetails = await ShowCreate.findById(showId);
+    redis.set(showId, JSON.stringify({ showdetails, success: true }));
+    res.json({ showdetails, success: true });
+  }
+);
+
 export const findhallbyid = async (req: Request, res: Response) => {
   const { hallId } = req.body;
 
@@ -98,8 +99,8 @@ export const findhallbyid = async (req: Request, res: Response) => {
     if (data) {
       res.json(JSON.parse(data));
     } else {
-      const halldetails = await MovieHall.findById(hallId);
-      redis.set(hallId, JSON.stringify(halldetails));
+      const halldetails = await MovieHall.findById(hallId); //TODO:
+      redis.set(hallId, JSON.stringify(halldetails), "EX", 3000);
       res.json(halldetails);
     }
   });

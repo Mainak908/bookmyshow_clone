@@ -5,26 +5,35 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { AuthContext } from "@/providers";
+import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-
-export function InputOTPWithSeparator({ phone, togglefn }) {
+interface Iprops {
+  phone: string;
+  togglefn?: any;
+  redirect?: boolean;
+}
+export function InputOTPWithSeparator({ phone, togglefn, redirect }: Iprops) {
   const [value, setValue] = useState("");
   const { checkLoginState } = useContext(AuthContext);
   const inputref = useRef(null);
-
+  const router = useRouter();
   const handleVerifyOTP = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/verifyOTP", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, value }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT}/api/v1/verifyOTP`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, value }),
+          credentials: "include",
+        }
+      );
       const res = await response.json();
       if (res.success) {
-        togglefn((prev) => !prev);
+        !redirect && togglefn();
         checkLoginState();
+        redirect && router.push("/");
       } else {
         toast("wrong otp entered");
       }
