@@ -1,46 +1,55 @@
 import { NextFunction, Request, Response } from "express";
-import { myQueue, redis } from "../index";
-import ShowCreate from "../models/Show";
+import jwt from "jsonwebtoken";
+import { Ijwt } from "../controllers/bookingController";
+import { redis } from "../index";
 
-export let jobid: string;
+interface Idata {
+  selectedSeat: any[];
+  search: string;
+}
 
+function coordinateToCell(coordinate: any[]) {
+  let column = String.fromCharCode(65 + coordinate[0]);
+  let row = coordinate[1] + 1;
+  return column + row;
+}
 export const checkoutMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { selectedSeat, search: showId } = req.body;
-  let seatmap: any;
-
+  const { selectedSeat, search: showId } = req.body as Idata;
+  const Pipeline = redis.pipeline();
+  let isLocked = false;
   try {
-    await redis.get(showId, async (err, redisresult) => {
-      if (redisresult) {
-        seatmap = JSON.parse(redisresult).showdetails;
-      } else {
-        seatmap = await ShowCreate.findById(showId);
+    const { accessToken } = req.cookies;
+    const { _id: userid } = jwt.decode(accessToken) as Ijwt;
+    if (!userid) return;
+
+    selectedSeat.forEach((seat) => {
+      Pipeline.get(`${showId}${coordinateToCell(seat)}`);
+    });
+
+    const returndata = await Pipeline.exec();
+
+    returndata?.forEach((data) => {
+      if (data[1]) {
+        isLocked = true;
+        return;
       }
     });
-    // console.log(seatmap);
-    for (const [row, col] of selectedSeat) {
-      if (seatmap.seatmatrix[row][col].islocked)
-        return res.json({ message: "locked" });
-    }
-    for (const [row, col] of selectedSeat) {
-      seatmap.seatmatrix[row][col].islocked = true;
-    }
 
-    redis.set(showId, JSON.stringify({ showdetails: seatmap, success: true }));
-    myQueue
-      .add(
-        "job",
-        { seatdetails: JSON.stringify(selectedSeat), showId },
-        { delay: 60000 }
-      )
-      .then((job: any) => {
-        jobid = job.id;
-      });
+    if (isLocked) {
+      return res.json({ message: "locked" });
+    }
+    selectedSeat.forEach((seat) => {
+      Pipeline.set(`${showId}${coordinateToCell(seat)}`, userid, "EX", 120);
+    });
+
+    await Pipeline.exec();
+
     next();
   } catch (error) {
-    console.log("error happend in checkoutMiddleware", error);
+    console.log("something error happend in checkoutMiddleware ", error);
   }
 };

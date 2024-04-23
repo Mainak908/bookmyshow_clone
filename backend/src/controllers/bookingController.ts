@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { myQueue, redis, stripe } from "../index";
-import { jobid } from "../middleware/paymentMiddleware";
+import { stripe } from "../index";
 import ShowCreate from "../models/Show";
 import Booking from "../models/booking";
-interface Ijwt {
+export interface Ijwt {
   _id: string;
   name: string;
   email: string;
@@ -114,15 +113,6 @@ export const webHookfn = async (req: Request, res: Response) => {
             results.forEach((result) => {
               console.log("database booked done");
             });
-          })
-          .then(async () => {
-            myQueue.remove(jobid).then(() => console.log("job removed"));
-            const newseatMap = await ShowCreate.findById(showId);
-
-            redis.set(
-              showId,
-              JSON.stringify({ showdetails: newseatMap, success: true })
-            );
           })
           .catch((err) => {
             console.error(err);

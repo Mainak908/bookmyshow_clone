@@ -11,7 +11,7 @@ import authRoute from "./routes/authRoute";
 import bookingRoute from "./routes/bookingRoute";
 import generalRoute from "./routes/generalRoute";
 
-export const { myQueue, redis, stripe } = InitFunction();
+export const { redis, stripe } = InitFunction();
 
 const app = express();
 

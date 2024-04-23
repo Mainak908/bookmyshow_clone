@@ -80,14 +80,34 @@ export const movietoshow = async (req: Request, res: Response) => {
 
 export const findshowbyid = asynchandler(
   async (req: Request, res: Response) => {
+    const Pipeline = redis.pipeline();
     const { showId } = req.body;
 
-    const data = await redis.get(showId);
+    let showdetails = await ShowCreate.findById(showId);
 
-    if (data) return res.json(JSON.parse(data));
+    showdetails?.seatmatrix.forEach((perArray) => {
+      perArray.forEach((element) => {
+        if (!element.reference && element.seatNumber != "XX")
+          Pipeline.get(`${showId}${element.seatNumber}`);
+      });
+    });
 
-    const showdetails = await ShowCreate.findById(showId);
-    redis.set(showId, JSON.stringify({ showdetails, success: true }));
+    const redisdata = await Pipeline.exec();
+
+    if (!redisdata) return;
+    let index = 0;
+    showdetails?.seatmatrix.forEach((perArray) => {
+      perArray.forEach((element) => {
+        if (
+          !element.reference &&
+          element.seatNumber != "XX" &&
+          redisdata[index++][1]
+        ) {
+          element.islocked = true;
+        }
+      });
+    });
+
     res.json({ showdetails, success: true });
   }
 );

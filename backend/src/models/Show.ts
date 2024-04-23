@@ -7,6 +7,7 @@ interface matrixElement {
   reference: Bookingtype["_id"];
   seatNumber: string;
   fare: number;
+  islocked: boolean;
 }
 export interface ShowType extends Document {
   movie: Movie["_id"];
@@ -27,12 +28,17 @@ const everyshow = new Schema<ShowType>({
     required: true,
   },
   time: Date,
+
   seatmatrix: [
     [
       {
         reference: { type: Schema.Types.ObjectId, ref: "Booking" },
         seatNumber: String,
         fare: Number,
+        islocked: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   ],
