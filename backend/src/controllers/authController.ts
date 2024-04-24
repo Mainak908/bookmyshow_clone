@@ -98,8 +98,14 @@ export async function otpSenderHandler(req: Request, res: Response) {
 
 export async function logOutHandler(req: Request, res: Response) {
   return res
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken")
+    .clearCookie("accessToken", {
+      ...accessTokenCookieOptions,
+      maxAge: 0,
+    })
+    .clearCookie("refreshToken", {
+      ...accessTokenCookieOptions,
+      maxAge: 0,
+    })
     .json({ success: true });
 }
 
