@@ -59,7 +59,7 @@ const SignInModal = ({ togglefn }: any) => {
       window.open(url, "_blank", windowFeatures);
 
       const handleWindowMessage = async (event: any) => {
-        if (event.origin !== "http://localhost:3000") {
+        if (event.origin !== `${process.env.NEXT_PUBLIC_CLIENT_ENDPOINT}`) {
           return;
         }
         const { data } = event;
