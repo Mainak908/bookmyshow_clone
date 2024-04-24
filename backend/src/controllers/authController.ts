@@ -12,6 +12,7 @@ const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15 mins
   httpOnly: true,
   sameSite: "none",
+  secure: true,
 };
 
 interface JwtPayload {
