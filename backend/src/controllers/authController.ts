@@ -222,11 +222,6 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
       res.json({ message: "Refresh token is expired or used" }).status(401);
     }
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
     const accessToken = jwt.sign(
       {
         _id: user._id,
@@ -243,7 +238,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
+      .cookie("accessToken", accessToken, accessTokenCookieOptions)
 
       .json({ message: "access token refreshed" });
   } catch (error) {
