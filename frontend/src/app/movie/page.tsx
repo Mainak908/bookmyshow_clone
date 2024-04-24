@@ -24,7 +24,6 @@ const Page = () => {
         .then((res) => res.data),
 
     queryKey: ["movie_id", search],
-    staleTime: 100000,
   });
 
   useEffect(() => {

@@ -29,7 +29,6 @@ const Page = () => {
         .then((res) => res.data),
 
     queryKey: ["movieId", search, initialDate.toString()],
-    staleTime: 1000000,
   });
 
   useEffect(() => {
