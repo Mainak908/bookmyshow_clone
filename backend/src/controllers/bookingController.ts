@@ -65,7 +65,7 @@ export const webHookfn = async (req: Request, res: Response) => {
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (error) {
-    console.log("Error verifying webhook signature: ");
+    console.log("Error verifying webhook signature: ", error);
     return res.sendStatus(400);
   }
 
