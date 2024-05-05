@@ -1,5 +1,6 @@
 export function generateSeatMatrix(
   rows: number,
+  cols: number,
   fares: { rows: number; fare: number }[],
   bad: number[][]
 ) {
@@ -8,7 +9,7 @@ export function generateSeatMatrix(
   for (let i = 1; i <= rows; i++) {
     const row: any[] = [];
 
-    for (let j = 1; j <= 5; j++) {
+    for (let j = 1; j <= cols; j++) {
       if (bad.some((pair) => pair[0] === i && pair[1] === j)) {
         row.push({
           seatNumber: "XX",

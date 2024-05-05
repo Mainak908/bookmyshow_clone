@@ -55,9 +55,9 @@ export const CreateMovie = async (req: Request, res: Response) => {
 };
 
 export const CreateMovieTheatre = async (req: Request, res: Response) => {
-  const { name, badSeat, location, rows, fares } = req.body;
+  const { name, badSeat, location, rows, cols, fares } = req.body;
 
-  const sendmatrix = generateSeatMatrix(rows, fares, badSeat);
+  const sendmatrix = generateSeatMatrix(rows, cols, fares, badSeat);
 
   const mvTheatreCreate = new MovieHall({
     name,
