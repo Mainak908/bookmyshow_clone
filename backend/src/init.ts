@@ -1,4 +1,4 @@
-import DF from "ioredis";
+import { Redis } from "ioredis";
 import Stripe from "stripe";
 
 export function InitFunction() {
@@ -6,10 +6,7 @@ export function InitFunction() {
     typescript: true,
     apiVersion: "2023-10-16",
   });
-  const redis = new DF({
-    host: process.env.CACHEHOST || "localhost",
-    port: Number(process.env.CACHEPORT) || 6380,
-  });
+  const redis = new Redis(process.env.REDIS_URI!);
 
   return { stripe, redis };
 }

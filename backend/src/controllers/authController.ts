@@ -23,6 +23,11 @@ interface JwtPayload {
 interface JwtPayload2 {
   user: any;
 }
+
+interface IdecodedToken {
+  _id: string;
+}
+
 const refreshTokenCookieOptions: CookieOptions = {
   ...accessTokenCookieOptions,
   maxAge: 3.154e10, // 1 year
@@ -188,7 +193,6 @@ export function urlSender(_: Request, res: Response) {
 export async function loggedinCheckHandler(req: Request, res: Response) {
   try {
     const { accessToken } = req.cookies;
-    // console.log("accessssss", accessToken);
     if (!accessToken) return res.json({ loggedIn: false });
 
     const user = jwt.verify(
@@ -201,9 +205,7 @@ export async function loggedinCheckHandler(req: Request, res: Response) {
     res.json({ loggedIn: false }).status(401);
   }
 }
-interface IdecodedToken {
-  _id: string;
-}
+
 export const refreshAccessToken = async (req: Request, res: Response) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
