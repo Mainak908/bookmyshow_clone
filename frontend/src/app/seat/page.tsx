@@ -8,11 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useContext, useRef, useState } from "react";
+import { Suspense, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import LoadingPage from "../loading";
 import Notfound from "../not-found";
-import Grid from "./minimap";
+
 import Modal from "./seatmodal";
 
 export interface matrixElement {
@@ -39,8 +39,7 @@ const SeatSelection = () => {
   const searchParam = useSearchParams();
   const [selectedSeat, setselectedSeat] = useState<any[]>([]);
   const search = searchParam.get("search");
-  const containerRef = useRef(null);
-  const [visibleRows, setVisibleRows] = useState([]);
+
   const { seatCount, setSeatCount, loggedIn, setShowModal, showModal } =
     useContext(AuthContext);
 
@@ -107,7 +106,6 @@ const SeatSelection = () => {
 
   return (
     <>
-      <Grid rows={10} cols={25} />
       {showModal && (
         <Modal
           onClose={handleCloseModal}
