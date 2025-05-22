@@ -21,7 +21,7 @@ export function CarouselSpacingtry() {
               <img
                 src="bms16.avif"
                 alt="Banner 1"
-                className=" lg:rounded-2xl h-[195px] lg:h-[297px] lg:w-[1240px]"
+                className=" lg:rounded-2xl h-[195px] lg:h-[297px] lg:w-[1240px] w-screen"
               />
             </CarouselItem>
           ))}
