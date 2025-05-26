@@ -4,9 +4,8 @@ A full-featured clone of the popular ticket booking platform **BookMyShow**, bui
 
 ![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=next&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)
-![GraphQL](https://img.shields.io/badge/API-GraphQL-FF4081?logo=graphql)
-![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql)
-![License](https://img.shields.io/github/license/your-username/bookmyshow-clone)
+![PostgreSQL](https://img.shields.io/badge/Database-mongodb-blue?logo=mongodb)
+![License](https://img.shields.io/github/license/Mainak908/bookmyshow_clone)
 
 ---
 
